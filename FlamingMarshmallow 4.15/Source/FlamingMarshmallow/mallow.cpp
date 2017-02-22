@@ -9,9 +9,14 @@ Amallow::Amallow()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	//size of capsule
+	GetCapsuleComponent()->InitCapsuleSize(46.0f, 96.0f);
+
 	//creating static mesh
 	MallowVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MallowVisual"));
 	MallowVisual->SetupAttachment(RootComponent);
+
+	//find the asset we want to use
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> MallowVisualAsset(TEXT("/Game/MarshmallowV2"));
 
 	//if it found the asset position it correctly
@@ -22,10 +27,6 @@ Amallow::Amallow()
 		MallowVisual->SetWorldScale3D(FVector(0.8f));
 	}
 
-	//size of capsule
-	GetCapsuleComponent()->InitCapsuleSize(46.0f, 96.0f);
-
-	//CHARACTER
 	//input rates
 	TurnRate = 60.0f;
 	LookRate = 60.0f;
@@ -73,7 +74,7 @@ Amallow::Amallow()
 	//Particle System
 	MallowParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MallowParticleSystem"));
 	MallowParticleSystem->SetupAttachment(MallowVisual);
-	MallowParticleSystem->bAutoActivate = true;
+	MallowParticleSystem->bAutoActivate = true;//change to false when we add button to toggle the PS
 	MallowParticleSystem->SetRelativeLocation(FVector(0, 0, 0));
 	
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> MallowAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
@@ -105,10 +106,10 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	check(PlayerInputComponent);
 
-	//jumping and stop jumping
+	//jumping
 	PlayerInputComponent->BindAction("Jump",IE_Pressed, this, &ACharacter::Jump);
 
-	//start running
+	//start running/stop running
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &Amallow::StartRun);
 	PlayerInputComponent->BindAction("Run", IE_Released, this, &Amallow::StopRun);
 
@@ -117,6 +118,7 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("MoveForward", this, &Amallow::MoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &Amallow::MoveRight);
 
+	//turning and camera control
 	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnRate", this, &Amallow::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
@@ -137,7 +139,7 @@ void Amallow::MoveForward(float Value)
 {
 	if (Controller != NULL && Value != 0.0f)
 	{
-		//check controller to see what the character rotation
+		//check controller to see what the character rotation is
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
