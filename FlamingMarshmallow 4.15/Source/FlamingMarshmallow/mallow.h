@@ -14,15 +14,15 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 	Amallow();
 	
 	//camera components
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		USpringArmComponent* CameraBoom;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		UCameraComponent* FollowCamera;
 
 	//visual components
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* MallowVisual;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UParticleSystemComponent* MallowParticleSystem;
 
 public:
