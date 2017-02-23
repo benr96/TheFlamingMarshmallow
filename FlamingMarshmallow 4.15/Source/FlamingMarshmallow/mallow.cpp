@@ -30,6 +30,8 @@ Amallow::Amallow()
 	//input rates
 	TurnRate = 60.0f;
 	LookRate = 60.0f;
+	MaxSpeed = 400.0f;
+	JumpVelocity = 400.0f;
 
 	//so it doesn't rotate when the controller rotates
 	bUseControllerRotationPitch = false;
@@ -43,7 +45,10 @@ Amallow::Amallow()
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
 
 	//setting jump velocity
-	GetCharacterMovement()->JumpZVelocity = 600.0f;
+	GetCharacterMovement()->JumpZVelocity = JumpVelocity;
+
+	//setting max walking speed
+	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
 
 	//setting force in air
 	GetCharacterMovement()->AirControl = 0.5f;
@@ -127,12 +132,12 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void Amallow::StartRun()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 1200;
+	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed*1.5;
 }
 
 void Amallow::StopRun()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 600;
+	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
 }
 
 void Amallow::MoveForward(float Value)
@@ -177,5 +182,3 @@ void Amallow::TurnAtRate(float Rate)
 {
 	AddControllerYawInput(Rate * TurnRate * GetWorld()->GetDeltaSeconds());
 }
-
-

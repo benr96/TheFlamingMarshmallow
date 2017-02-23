@@ -26,10 +26,12 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 		UParticleSystemComponent* MallowParticleSystem;
 
 public:
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float TurnRate;
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float LookRate;
+	UPROPERTY(VisibleAnywhere, Category = Movement)
+		float MaxSpeed;
 
 	//functions for movement
 	void MoveForward(float Value);
