@@ -10,7 +10,7 @@ Amallow::Amallow()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//size of capsule
-	GetCapsuleComponent()->InitCapsuleSize(46.0f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(30.0f, 30.0f);
 
 	//creating static mesh
 	MallowVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MallowVisual"));
@@ -23,7 +23,7 @@ Amallow::Amallow()
 	if (MallowVisualAsset.Succeeded())
 	{
 		MallowVisual->SetStaticMesh(MallowVisualAsset.Object);
-		MallowVisual->SetRelativeLocation(FVector(0.0f, 0.0f, -40.0f));
+		MallowVisual->SetRelativeLocation(FVector(0.0f, 0.0f, -30.0f));
 		MallowVisual->SetWorldScale3D(FVector(0.8f));
 	}
 
@@ -79,7 +79,7 @@ Amallow::Amallow()
 	//Particle System
 	MallowParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MallowParticleSystem"));
 	MallowParticleSystem->SetupAttachment(MallowVisual);
-	MallowParticleSystem->bAutoActivate = true;//change to false when we add button to toggle the PS
+	MallowParticleSystem->bAutoActivate = false;//change to false when we add button to toggle the PS
 	MallowParticleSystem->SetRelativeLocation(FVector(0, 0, 0));
 	
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> MallowAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));

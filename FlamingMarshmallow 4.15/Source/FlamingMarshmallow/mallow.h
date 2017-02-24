@@ -32,6 +32,9 @@ public:
 		float LookRate;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float MaxSpeed;
+	UPROPERTY(VisibleAnywhere, Category = Movement)
+		float JumpVelocity;
+
 
 	//functions for movement
 	void MoveForward(float Value);
