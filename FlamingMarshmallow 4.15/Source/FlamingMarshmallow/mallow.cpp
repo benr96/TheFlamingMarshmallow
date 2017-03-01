@@ -10,22 +10,43 @@ Amallow::Amallow()
 	PrimaryActorTick.bCanEverTick = true;
 
 	//size of capsule
-	GetCapsuleComponent()->InitCapsuleSize(30.0f, 30.0f);
+	GetCapsuleComponent()->InitCapsuleSize(35.0f, 35.0f);
+	SetActorLocation(FVector(0, 0, 100));
 
 	//creating static mesh
 	MallowVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MallowVisual"));
 	MallowVisual->SetupAttachment(RootComponent);
 
 	//find the asset we want to use
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MallowVisualAsset(TEXT("/Game/MarshmallowV2"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MallowVisualAsset(TEXT("/Game/marshmallowV5_Marshmallow_Body"));
 
 	//if it found the asset position it correctly
 	if (MallowVisualAsset.Succeeded())
 	{
 		MallowVisual->SetStaticMesh(MallowVisualAsset.Object);
-		MallowVisual->SetRelativeLocation(FVector(0.0f, 0.0f, -30.0f));
-		MallowVisual->SetWorldScale3D(FVector(0.8f));
+		MallowVisual->SetRelativeLocation(FVector(5.0f, 0.0f, -12.0f));
 	}
+	
+	LeftEyeVis = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftEyeVis"));
+	RightEyeVis = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightEyeVis"));
+
+	LeftEyeVis->SetupAttachment(MallowVisual);
+	RightEyeVis->SetupAttachment(MallowVisual);
+
+	
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> LeftEyeAsset(TEXT("/Game/marshmallowV5_left_eye"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> RightEyeAsset(TEXT("/Game/marshmallowV5_right_eye"));
+
+	if (LeftEyeAsset.Succeeded())
+	{
+		LeftEyeVis->SetStaticMesh(LeftEyeAsset.Object);
+	}
+
+	if (RightEyeAsset.Succeeded())
+	{
+		RightEyeVis->SetStaticMesh(RightEyeAsset.Object);
+	}
+	
 
 	//input rates
 	TurnRate = 60.0f;
@@ -79,7 +100,7 @@ Amallow::Amallow()
 	//Particle System
 	MallowParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MallowParticleSystem"));
 	MallowParticleSystem->SetupAttachment(MallowVisual);
-	MallowParticleSystem->bAutoActivate = false;//change to false when we add button to toggle the PS
+	MallowParticleSystem->bAutoActivate = true;//change to false when we add button to toggle the PS
 	MallowParticleSystem->SetRelativeLocation(FVector(0, 0, 0));
 	
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> MallowAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
@@ -88,6 +109,9 @@ Amallow::Amallow()
 	{
 		MallowParticleSystem->SetTemplate(MallowAsset.Object);
 	}
+
+	AutoPossessPlayer = EAutoReceiveInput::Player0;
+	AutoReceiveInput = EAutoReceiveInput::Player0;
 }
 
 // Called when the game starts or when spawned
@@ -101,7 +125,7 @@ void Amallow::BeginPlay()
 void Amallow::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
-	
+
 }
 
 // Called to bind functionality to input

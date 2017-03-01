@@ -23,6 +23,11 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* MallowVisual;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* LeftEyeVis;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* RightEyeVis;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UParticleSystemComponent* MallowParticleSystem;
 
 public:
