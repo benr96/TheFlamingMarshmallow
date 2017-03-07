@@ -54,6 +54,8 @@ Amallow::Amallow()
 	MaxSpeed = 400.0f;
 	JumpVelocity = 400.0f;
 
+	midJump = false;
+
 	//so it doesn't rotate when the controller rotates
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -136,7 +138,7 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	check(PlayerInputComponent);
 
 	//jumping
-	PlayerInputComponent->BindAction("Jump",IE_Pressed, this, &ACharacter::Jump);
+	PlayerInputComponent->BindAction("Jump",IE_Pressed, this,&Amallow::jump );
 
 	//start running/stop running
 	PlayerInputComponent->BindAction("Run", IE_Pressed, this, &Amallow::StartRun);
@@ -152,6 +154,25 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("TurnRate", this, &Amallow::TurnAtRate);
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &Amallow::LookUpAtRate);
+}
+
+void Amallow::jump()
+{
+
+	float Z = GetCharacterMovement()->Velocity.Z;
+	float changeZ = 500;//make this relative to current Z so it always has a similar increase(currently double jumping at different levels of normal jump changes overall jump height quite a lot)
+
+	if (midJump == true)
+	{
+		GetCharacterMovement()->Velocity += FVector(0, 0, changeZ);//maybe adding straight to velocity isn't the best way to do this
+		midJump = false;
+	}
+
+	if (Z == 0)
+	{
+		Jump();
+		midJump = true;
+	}
 }
 
 void Amallow::StartRun()

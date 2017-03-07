@@ -30,6 +30,7 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UParticleSystemComponent* MallowParticleSystem;
 
+
 public:
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float TurnRate;
@@ -40,6 +41,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float JumpVelocity;
 
+	bool midJump;
 
 	//functions for movement
 	void MoveForward(float Value);
@@ -48,6 +50,7 @@ public:
 	void LookUpAtRate(float Value);
 	void StartRun();
 	void StopRun();
+	void jump();
 
 
 	// Called when the game starts or when spawned
