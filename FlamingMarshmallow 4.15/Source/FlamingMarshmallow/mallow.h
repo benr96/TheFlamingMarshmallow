@@ -1,5 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+//stamina for dashing
+//face where camera is looking, maybe only for when locked on
+//limit camera movement so you don't glitch through mallow
 #pragma once
 
 #include "GameFramework/Character.h"
@@ -11,6 +13,7 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 	GENERATED_BODY()
 
 	// Sets default values for this character's properties
+
 	Amallow();
 	
 	//camera components
@@ -28,7 +31,9 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 		UStaticMeshComponent* RightEyeVis;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
-		UParticleSystemComponent* MallowParticleSystem;
+		UParticleSystemComponent* Flames;
+		
+	UTextRenderComponent* Speed;
 
 
 public:
@@ -43,15 +48,43 @@ public:
 
 	bool midJump;
 
+	bool right;
+	bool left;
+	bool forward;
+	bool back;
+
 	//functions for movement
-	void MoveForward(float Value);
-	void MoveRight(float Value);
+	void MoveForward();
+	void MoveBack();
+	void MoveLeft();
+	void MoveRight();
+	void StopForward();
+	void StopBack();
+	void StopLeft();
+	void StopRight();
+	void IncFTime();
+	void IncBTime();
+	void IncRTime();
+	void IncLTime();
+	void ToggleFire();
+
+	FTimerHandle ForwardTimer;
+	float forwardTime;
+	FTimerHandle BackTimer;
+	float backTime;
+	FTimerHandle LeftTimer;
+	float leftTime;
+	FTimerHandle RightTimer;
+	float rightTime;
+	float originalTime;
+
+	FVector CheckDirection(FString Axis);
+	void movementControl();
 	void TurnAtRate(float Value);
 	void LookUpAtRate(float Value);
 	void StartRun();
 	void StopRun();
 	void jump();
-
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
