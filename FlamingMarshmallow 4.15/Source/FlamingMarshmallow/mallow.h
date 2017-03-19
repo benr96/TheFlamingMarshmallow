@@ -15,7 +15,7 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 	// Sets default values for this character's properties
 
 	Amallow();
-	
+
 	//camera components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 		USpringArmComponent* CameraBoom;
@@ -32,7 +32,7 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UParticleSystemComponent* Flames;
-		
+
 	UTextRenderComponent* Speed;
 
 
@@ -88,7 +88,7 @@ public:
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+
 	// Called every frame
 	virtual void Tick( float DeltaSeconds ) override;
 

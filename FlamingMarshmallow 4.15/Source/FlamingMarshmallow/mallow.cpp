@@ -12,7 +12,7 @@ Amallow::Amallow()
 
 	//size of capsule
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 35.0f);
-	SetActorLocation(FVector(0,0,100));
+	SetActorLocation(FVector(-600,0,100));
 
 	//creating static mesh
 	MallowVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MallowVisual"));
@@ -27,13 +27,13 @@ Amallow::Amallow()
 		MallowVisual->SetStaticMesh(MallowVisualAsset.Object);
 		MallowVisual->SetRelativeLocation(FVector(5.0f, 0.0f, -12.0f));
 	}
-	
+
 	LeftEyeVis = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftEyeVis"));
 	RightEyeVis = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightEyeVis"));
 
 	LeftEyeVis->SetupAttachment(MallowVisual);
 	RightEyeVis->SetupAttachment(MallowVisual);
-	
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> LeftEyeAsset(TEXT("/Game/marshmallowV5_left_eye"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> RightEyeAsset(TEXT("/Game/marshmallowV5_right_eye"));
 
@@ -46,7 +46,7 @@ Amallow::Amallow()
 	{
 		RightEyeVis->SetStaticMesh(RightEyeAsset.Object);
 	}
-	
+
 
 	//input rates
 	TurnRate = 60.0f;
@@ -60,7 +60,7 @@ Amallow::Amallow()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
-	
+
 	//move character in direction of input
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 
@@ -104,7 +104,7 @@ Amallow::Amallow()
 	Flames->SetupAttachment(MallowVisual);
 	Flames->bAutoActivate = false;
 	Flames->SetRelativeLocation(FVector(0, 0, 0));
-	
+
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> FlamesAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
 
 	if (FlamesAsset.Succeeded())
@@ -127,7 +127,7 @@ Amallow::Amallow()
 void Amallow::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -255,7 +255,7 @@ void Amallow::MoveBack()
 	if (GetWorldTimerManager().IsTimerActive(BackTimer) == true)
 	{
 		GetCharacterMovement()->MaxAcceleration = 20000000000;
-		GetCharacterMovement()->MaxWalkSpeed = 2500;	
+		GetCharacterMovement()->MaxWalkSpeed = 2500;
 	}
 
 	back = true;
@@ -285,7 +285,7 @@ void Amallow::MoveLeft()
 	if (GetWorldTimerManager().IsTimerActive(LeftTimer) == true)
 	{
 		GetCharacterMovement()->MaxAcceleration = 20000000000;
-		GetCharacterMovement()->MaxWalkSpeed = 2500;	
+		GetCharacterMovement()->MaxWalkSpeed = 2500;
 	}
 
 	left = true;

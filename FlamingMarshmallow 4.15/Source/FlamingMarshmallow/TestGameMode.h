@@ -6,7 +6,7 @@
 #include "TestGameMode.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class FLAMINGMARSHMALLOW_API ATestGameMode : public AGameModeBase
