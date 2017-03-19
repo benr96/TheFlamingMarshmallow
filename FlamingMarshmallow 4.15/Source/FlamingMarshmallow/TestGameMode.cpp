@@ -9,6 +9,8 @@ void ATestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	DefaultPawnClass = Amallow::StaticClass();
+
+
 	Amallow* NewMallow = GetWorld()->SpawnActor<Amallow>(Amallow::StaticClass());
 }
 
