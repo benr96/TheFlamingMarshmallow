@@ -3,17 +3,13 @@
 #include "FlamingMarshmallow.h"
 #include "TestGameMode.h"
 #include "mallow.h"
-
+#include "AI.h"
 
 void ATestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 	DefaultPawnClass = Amallow::StaticClass();
 	Amallow* NewMallow = GetWorld()->SpawnActor<Amallow>(Amallow::StaticClass());
-
-
-
-	
 }
 
 APawn* ATestGameMode::SpawnDefaultPawnFor()

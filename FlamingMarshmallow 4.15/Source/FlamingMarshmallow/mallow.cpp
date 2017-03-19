@@ -114,6 +114,9 @@ Amallow::Amallow()
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 	AutoReceiveInput = EAutoReceiveInput::Player0;
+
+	// Variables for targeting system
+	fMouseSensitivity = 60.0f;
 }
 
 // Called when the game starts or when spawned
@@ -150,10 +153,13 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAxis("MoveRight", this, &Amallow::MoveRight);
 
 	//turning and camera control
-	PlayerInputComponent->BindAxis("Turn", this, &APawn::AddControllerYawInput);
+	PlayerInputComponent->BindAxis("Turn", this, &Amallow::CameraYaw);
 	PlayerInputComponent->BindAxis("TurnRate", this, &Amallow::TurnAtRate);
-	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
+	PlayerInputComponent->BindAxis("LookUp", this, &Amallow::CameraPitch);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &Amallow::LookUpAtRate);
+
+	//control for targetting enemies
+	PlayerInputComponent->BindAction("LockOn", IE_Pressed, this, &Amallow::LockOnEnemy);
 }
 
 void Amallow::jump()
@@ -226,4 +232,44 @@ void Amallow::LookUpAtRate(float Rate)
 void Amallow::TurnAtRate(float Rate)
 {
 	AddControllerYawInput(Rate * TurnRate * GetWorld()->GetDeltaSeconds());
+}
+
+void Amallow::LockOnEnemy()
+{
+	if (bLockOn) {
+		bLockOn = false;
+	}
+	else {
+		bLockOn = true;
+	}
+
+	// Test messages
+	if (bLockOn) { UE_LOG(LogTemp, Warning, TEXT("Locked On")); }
+	else { UE_LOG(LogTemp, Warning, TEXT("Not Locked On")); }
+}
+
+void Amallow::CameraPitch(float fAmount)
+{
+	// Will disable camera movement by player when 'TAB' has been pressed
+	if (!bLockOn)
+	{
+		AddControllerPitchInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
+	}
+	else
+	{
+		AddControllerPitchInput(0);
+	}
+}
+
+void Amallow::CameraYaw(float fAmount)
+{
+	// Will disable camera movement by player when 'TAB' has been pressed
+	if (!bLockOn)
+	{
+		AddControllerYawInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
+	}
+	else
+	{
+		AddControllerYawInput(0);
+	}
 }

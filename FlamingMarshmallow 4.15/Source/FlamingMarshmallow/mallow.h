@@ -41,6 +41,16 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float JumpVelocity;
 
+	// Variables for targeting system
+	UFUNCTION()
+		void CameraPitch(float fAmount);
+	UFUNCTION()
+		void CameraYaw(float fAmount);
+	UPROPERTY(EditDefaultsOnly, Category = "Camera")
+		float fMouseSensitivity;
+	bool bLockOn = false;
+
+
 	bool midJump;
 
 	//functions for movement
@@ -52,6 +62,7 @@ public:
 	void StopRun();
 	void jump();
 
+	void LockOnEnemy();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
