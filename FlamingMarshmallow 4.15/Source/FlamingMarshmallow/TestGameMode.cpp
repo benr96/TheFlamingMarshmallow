@@ -4,6 +4,7 @@
 #include "TestGameMode.h"
 #include "mallow.h"
 #include "ShrineSP.h"
+#include "AI.h"
 
 void ATestGameMode::BeginPlay()
 {
