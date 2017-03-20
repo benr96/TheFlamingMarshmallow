@@ -11,3 +11,11 @@ At around the same time as the melting incident, the Chocolate kingdom also look
 
 Mallow was but a child and yet he was sent off on his own outside the safety of his village for the first time. Unsure of the fate his parents and everyone he had ever knew or cared about held, Mallow began to grow a resentment towards the kingdom of Chocolate, the ones who were propagating and prolonging the needless war in mallows eyes and in this rage and resentment, Mallow swore to take 
 revenge on the Chocolate kingdom and end this war once and for all. Armed with the power of being able to burst into flames at will, mallow holds a crucial advantages that could swing the tides of power between the two kingdoms.
+
+##IDEAS
+
+- Party member from the Ice Kingdom, the last of his kind also seeking revenge against the chocolate.
+  
+- Save points are a form of shrines from the time before the war where the four kingdoms got along in peace and harmony. Statue dedicated to the heroes of the kingdoms are set up around a portal. These portals will allow you to move from save point to save point.
+
+- There will be 4 biomes, one for each kingdom. Marshmallow: grassy plains, Chocolate: industrialized, Ice: desert (formally Ice), Jellies; snow covered (sugar) Sugar Isles
