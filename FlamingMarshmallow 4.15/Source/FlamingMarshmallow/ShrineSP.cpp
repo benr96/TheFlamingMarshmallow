@@ -13,11 +13,15 @@ AShrineSP::AShrineSP()
 	//init static meshes comps
 	base = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("base"));
 	stand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("stand"));
+
 	torus = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("torus"));
+	torusPS = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("torusPS"));
+
 
 	pillar1 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("pillar1"));
 	pillar1Top = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("pillar1Top"));
 	pillar1PS = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Pillar1PS"));
+
 
 	pillar2 = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("pillar2"));
 	pillar2Top = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("pillar2Top"));
@@ -74,13 +78,13 @@ AShrineSP::AShrineSP()
 		torus->SetStaticMesh(torusAsset.Object);
 	}
 	
-	/*
+	
 	if (torusPSAsset.Succeeded())
 	{
 		torusPS->SetTemplate(torusPSAsset.Object);
 	}
 
-	*/
+	
 	if (pillar1Asset.Succeeded())
 	{
 		pillar1->SetStaticMesh(pillar1Asset.Object);
@@ -153,7 +157,7 @@ AShrineSP::AShrineSP()
 	stand->SetupAttachment(base);
 
 	torus->SetupAttachment(stand);
-	//torusPS->SetupAttachment(torus);
+	torusPS->SetupAttachment(torus);
 
 	pillar1->SetupAttachment(base);
 	pillar1Top->SetupAttachment(pillar1);
@@ -181,14 +185,15 @@ AShrineSP::AShrineSP()
 	pillar2PS->SetRelativeLocation(FVector(739, -728, 300));
 	pillar3PS->SetRelativeLocation(FVector(-747, 766, 300));
 	pillar4PS->SetRelativeLocation(FVector(-730, -739, 300));
+	torusPS->SetRelativeLocation(FVector(0, 0, 550));
+	
 
 	
 	pillar1PS->bAutoActivate = true;
 	pillar2PS->bAutoActivate = true;
 	pillar3PS->bAutoActivate = true;
 	pillar4PS->bAutoActivate = true;
-
-	//torusPS->bAutoActivate = true;
+	torusPS->bAutoActivate = true;
 	
 }
 
@@ -208,15 +213,15 @@ void AShrineSP::Tick(float DeltaTime)
 	FVector NextPos = torus->RelativeLocation;
 	
 	float DeltaHeight = (FMath::Sin(TimeRunning + DeltaTime) - FMath::Sin(TimeRunning));
-	NextPos.Z += DeltaHeight * 20.0f;
+	NextPos.Z += DeltaHeight * 40.0f;
 	TimeRunning += DeltaTime;
 	
 	torus->SetRelativeLocation(NextPos);
+	torus->SetRelativeRotation(FRotator(0,TimeRunning*10,0));
 
 
-	//make torus hover and maybe rotate
 
 	//make pillar tops hover and add flames to each one
 
 }
-
+ 

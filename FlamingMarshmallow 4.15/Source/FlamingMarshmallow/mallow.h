@@ -87,6 +87,7 @@ public:
 	FTimerHandle RightTimer;
 	float rightTime;
 	float originalTime;
+	bool doubleMove;
 
 	FVector CheckDirection(FString Axis);
 	void movementControl();
@@ -95,6 +96,8 @@ public:
 	void StartRun();
 	void StopRun();
 	void jump();
+	void dashOn(float acc = 20000000000, float speed = 2500);
+	void dashOff(FTimerHandle handle, float *time);
 
 	void LockOnEnemy();
 

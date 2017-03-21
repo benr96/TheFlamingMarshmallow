@@ -124,6 +124,8 @@ Amallow::Amallow()
 	forward = false;
 	back = false;
 
+	doubleMove = false;
+
 	originalTime = 0.05;
 }
 
@@ -194,6 +196,11 @@ void Amallow::ToggleFire()
 
 void Amallow::movementControl()
 {
+	if (GetCharacterMovement()->Velocity.Z != 0 && doubleMove == true)
+	{
+		GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity/10;
+	}
+
 	//input functions change boolean variable and handle dashing/dodging, this functions controls normal movement
 	if (left == true)
 	{
@@ -224,15 +231,12 @@ void Amallow::movementControl()
 	}
 }
 
-//WILL PROBABLY MAKE THIS IN TO A NEW CLASS AND MAKE INSTANCES FOR EACH DIRECTION SO I DON"T HAVE TO REPEAT ALL THESE FUNCTIONS
-
 //the move functions check if timer is active, if so, increase max speed/acc for dashing/dodging
 void Amallow::MoveForward()
 {
-	if (GetWorldTimerManager().IsTimerActive(ForwardTimer) == true)
+	if (GetWorldTimerManager().IsTimerActive(ForwardTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
 	{
-		GetCharacterMovement()->MaxAcceleration = 20000000000;
-		GetCharacterMovement()->MaxWalkSpeed = 5000;
+		dashOn(20000000000, 5000);
 	}
 
 	forward = true;
@@ -241,7 +245,10 @@ void Amallow::MoveForward()
 //the timers are started when the button is released, after release you have 0.05 seconds to press it again to initiate dash
 void Amallow::StopForward()
 {
-	GetWorldTimerManager().SetTimer(ForwardTimer, this, &Amallow::IncFTime, 0.05f, true);
+	if (GetCharacterMovement()->Velocity.Z == 0)
+	{
+		GetWorldTimerManager().SetTimer(ForwardTimer, this, &Amallow::IncFTime, 0.05f, true);
+	}
 	forward = false;
 }
 
@@ -251,19 +258,15 @@ void Amallow::IncFTime()
 
 	if (forwardTime < 0)
 	{
-		GetWorldTimerManager().ClearTimer(ForwardTimer);
-		forwardTime = originalTime;
-		GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
-		GetCharacterMovement()->MaxAcceleration = 2048;
+		dashOff(ForwardTimer, &forwardTime);
 	}
 }
 
 void Amallow::MoveBack()
 {
-	if (GetWorldTimerManager().IsTimerActive(BackTimer) == true)
+	if (GetWorldTimerManager().IsTimerActive(BackTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
 	{
-		GetCharacterMovement()->MaxAcceleration = 20000000000;
-		GetCharacterMovement()->MaxWalkSpeed = 2500;
+		dashOn();
 	}
 
 	back = true;
@@ -271,7 +274,10 @@ void Amallow::MoveBack()
 
 void Amallow::StopBack()
 {
-	GetWorldTimerManager().SetTimer(BackTimer, this, &Amallow::IncBTime, 0.05f, true);
+	if (GetCharacterMovement()->Velocity.Z == 0)
+	{
+		GetWorldTimerManager().SetTimer(BackTimer, this, &Amallow::IncBTime, 0.05f, true);
+	}
 	back = false;
 }
 
@@ -281,19 +287,15 @@ void Amallow::IncBTime()
 
 	if (backTime < 0)
 	{
-		GetWorldTimerManager().ClearTimer(BackTimer);
-		backTime = originalTime;
-		GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
-		GetCharacterMovement()->MaxAcceleration = 2048;
+		dashOff(BackTimer, &backTime);
 	}
 }
 
 void Amallow::MoveLeft()
 {
-	if (GetWorldTimerManager().IsTimerActive(LeftTimer) == true)
+	if (GetWorldTimerManager().IsTimerActive(LeftTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
 	{
-		GetCharacterMovement()->MaxAcceleration = 20000000000;
-		GetCharacterMovement()->MaxWalkSpeed = 2500;
+		dashOn();
 	}
 
 	left = true;
@@ -301,7 +303,10 @@ void Amallow::MoveLeft()
 
 void Amallow::StopLeft()
 {
-	GetWorldTimerManager().SetTimer(LeftTimer, this, &Amallow::IncLTime, 0.05f, true);
+	if (GetCharacterMovement()->Velocity.Z == 0)
+	{
+		GetWorldTimerManager().SetTimer(LeftTimer, this, &Amallow::IncLTime, 0.05f, true);
+	}
 	left = false;
 }
 
@@ -311,19 +316,15 @@ void Amallow::IncLTime()
 
 	if (leftTime < 0)
 	{
-		GetWorldTimerManager().ClearTimer(LeftTimer);
-		leftTime = originalTime;
-		GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
-		GetCharacterMovement()->MaxAcceleration = 2048;
+		dashOff(LeftTimer, &leftTime);
 	}
 }
 
 void Amallow::MoveRight()
 {
-	if (GetWorldTimerManager().IsTimerActive(RightTimer) == true)
+	if (GetWorldTimerManager().IsTimerActive(RightTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
 	{
-		GetCharacterMovement()->MaxAcceleration = 20000000000;
-		GetCharacterMovement()->MaxWalkSpeed = 2500;
+		dashOn();
 	}
 
 	right = true;
@@ -331,7 +332,10 @@ void Amallow::MoveRight()
 
 void Amallow::StopRight()
 {
-	GetWorldTimerManager().SetTimer(RightTimer, this, &Amallow::IncRTime, 0.05f, true);
+	if (GetCharacterMovement()->Velocity.Z == 0)
+	{
+		GetWorldTimerManager().SetTimer(RightTimer, this, &Amallow::IncRTime, 0.05f, true);
+	}
 	right = false;
 }
 
@@ -341,10 +345,7 @@ void Amallow::IncRTime()
 
 	if (rightTime < 0)
 	{
-		GetWorldTimerManager().ClearTimer(RightTimer);
-		rightTime = originalTime;
-		GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
-		GetCharacterMovement()->MaxAcceleration = 2048;
+		dashOff(RightTimer, &rightTime);
 	}
 }
 
@@ -443,3 +444,21 @@ FVector Amallow::CheckDirection(FString Axis)
 
 	return Direction;
 }
+
+void Amallow::dashOff(FTimerHandle handle, float *time)
+{
+	GetWorldTimerManager().ClearTimer(handle);
+	*time = originalTime;
+	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
+	GetCharacterMovement()->MaxAcceleration = 2048;
+	GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity/10;
+	doubleMove = false;
+}
+
+void Amallow::dashOn(float acc, float speed)
+{
+	GetCharacterMovement()->MaxAcceleration = acc ;
+	GetCharacterMovement()->MaxWalkSpeed = speed;
+	doubleMove = true;
+}
+
