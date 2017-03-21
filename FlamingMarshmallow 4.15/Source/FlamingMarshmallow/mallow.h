@@ -5,6 +5,7 @@
 #pragma once
 
 #include "GameFramework/Character.h"
+#include "AI.h"
 #include "mallow.generated.h"
 
 UCLASS()
@@ -100,6 +101,9 @@ public:
 	void dashOff(FTimerHandle handle, float *time);
 
 	void LockOnEnemy();
+	void TargetEnemy();
+	AAI *TestAI;
+	FVector AILocation;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

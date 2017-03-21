@@ -38,6 +38,7 @@ void AAI::BeginPlay()
 void AAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	moveAI();
 
 }
 
@@ -46,5 +47,26 @@ void AAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AAI::moveAI()
+{
+	SetActorLocation(FVector(0, yPos, 150));
+
+	if (yPos <= 0 || yPos >= 500)
+	{
+		bHitLimit = true;
+	}
+	else
+	{
+		bHitLimit = false;
+	}
+
+	if (bHitLimit)
+	{
+		inc *= -1;
+	}
+
+	yPos += inc;
 }
 

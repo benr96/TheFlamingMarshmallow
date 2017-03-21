@@ -2,6 +2,7 @@
 
 #include "FlamingMarshmallow.h"
 #include "mallow.h"
+#include "Kismet/KismetMathLibrary.h"
 
 // Sets default values
 
@@ -142,6 +143,11 @@ void Amallow::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	movementControl();
+
+	if (bLockOn)
+	{
+		TargetEnemy();
+	}
 
 }
 
@@ -408,7 +414,7 @@ void Amallow::TargetEnemy()
 	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI->GetActorLocation());
 	rotation.Pitch = 0;
 	SetActorRotation(rotation);
-	CameraBoom.setrotation
+	//CameraBoom.setrotation
 	//rotation.Yaw += 180.0f;
 }
 

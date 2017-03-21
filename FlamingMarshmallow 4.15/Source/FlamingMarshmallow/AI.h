@@ -27,5 +27,11 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = StaticMeshAssets, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* aiMesh;
+
+	void moveAI();
+
+	float yPos = 500;
+	float inc = 3;
+	bool bHitLimit = false;
 	
 };

@@ -24,7 +24,9 @@ void ATestGameMode::BeginPlay()
 	Amallow* mainChar = GetWorld()->SpawnActor<Amallow>(Amallow::StaticClass());
 	mainChar->SetActorRelativeLocation(FVector(-600, 0, 100));
 
-	
+	AAI* testAI = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
+
+	mainChar->TestAI = testAI;
 
 }
 
