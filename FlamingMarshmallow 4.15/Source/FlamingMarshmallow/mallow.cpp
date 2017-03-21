@@ -389,16 +389,27 @@ void Amallow::TurnAtRate(float Rate)
 
 void Amallow::LockOnEnemy()
 {
-	if (bLockOn) {
+	if (bLockOn) 
+	{
 		bLockOn = false;
 	}
-	else {
+	else 
+	{
 		bLockOn = true;
 	}
 
 	// Test messages
 	if (bLockOn) { UE_LOG(LogTemp, Warning, TEXT("Locked On")); }
 	else { UE_LOG(LogTemp, Warning, TEXT("Not Locked On")); }
+}
+
+void Amallow::TargetEnemy()
+{
+	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI->GetActorLocation());
+	rotation.Pitch = 0;
+	SetActorRotation(rotation);
+	CameraBoom.setrotation
+	//rotation.Yaw += 180.0f;
 }
 
 void Amallow::CameraPitch(float fAmount)
