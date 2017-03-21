@@ -70,3 +70,7 @@ void AAI::moveAI()
 	yPos += inc;
 }
 
+void AAI::followMallow()
+{
+}
+

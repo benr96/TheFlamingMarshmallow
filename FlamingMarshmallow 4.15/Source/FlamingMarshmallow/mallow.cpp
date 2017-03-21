@@ -412,10 +412,7 @@ void Amallow::LockOnEnemy()
 void Amallow::TargetEnemy()
 {
 	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI->GetActorLocation());
-	rotation.Pitch = 0;
-	SetActorRotation(rotation);
-	//CameraBoom.setrotation
-	//rotation.Yaw += 180.0f;
+	Controller->SetControlRotation(rotation);
 }
 
 void Amallow::CameraPitch(float fAmount)

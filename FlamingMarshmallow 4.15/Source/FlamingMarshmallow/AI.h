@@ -29,9 +29,11 @@ public:
 		UStaticMeshComponent* aiMesh;
 
 	void moveAI();
+	void followMallow();
 
 	float yPos = 500;
-	float inc = 3;
+	float inc = 2;
 	bool bHitLimit = false;
+	bool bInRange = false;
 	
 };
