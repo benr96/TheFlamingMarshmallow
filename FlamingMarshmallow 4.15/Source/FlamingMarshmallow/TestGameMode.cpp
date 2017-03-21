@@ -6,6 +6,16 @@
 #include "ShrineSP.h"
 #include "AI.h"
 
+ATestGameMode::ATestGameMode()
+{
+	static ConstructorHelpers::FClassFinder<AHUD> MHUDClass(TEXT("/Game/MHUD"));
+
+	if (MHUDClass.Class != NULL)
+	{
+		HUDClass = MHUDClass.Class;
+	}	
+}
+
 void ATestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
@@ -13,6 +23,8 @@ void ATestGameMode::BeginPlay()
 
 	Amallow* mainChar = GetWorld()->SpawnActor<Amallow>(Amallow::StaticClass());
 	mainChar->SetActorRelativeLocation(FVector(-600, 0, 100));
+
+	
 
 }
 

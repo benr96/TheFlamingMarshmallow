@@ -12,7 +12,7 @@ UCLASS()
 class FLAMINGMARSHMALLOW_API ATestGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
-
+	ATestGameMode();
 	void BeginPlay();
 	APawn* SpawnDefaultPawnFor();
 };
