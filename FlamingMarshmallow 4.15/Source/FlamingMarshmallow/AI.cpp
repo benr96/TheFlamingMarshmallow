@@ -3,7 +3,6 @@
 #include "FlamingMarshmallow.h"
 #include "AI.h"
 
-
 // Sets default values
 AAI::AAI()
 {
@@ -22,9 +21,11 @@ AAI::AAI()
 	{
 		aiMesh->SetStaticMesh(aiMeshAsset.Object);
 		aiMesh->SetWorldScale3D(FVector(0.1f, 0.7f, 1.5f));
-		aiMesh->SetRelativeLocation(FVector(98.f, 470.f, 160.f));
+		//aiMesh->SetRelativeLocation(FVector(FMath::RandRange(-1100.f, 1100.f), FMath::RandRange(-1000.f, 1000.f), 50.f));
+		aiMesh->SetRelativeLocation(FVector(98.0, 470.f, 160.f));
 	}
 
+	left = 1;
 }
 
 // Called when the game starts or when spawned
@@ -51,9 +52,9 @@ void AAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AAI::moveAI()
 {
-	SetActorLocation(FVector(0, yPos, 0));
+	SetActorLocation(FVector(GetActorLocation().X, left*yPos, 50.f));
 
-	if (yPos <= 0 || yPos >= 500)
+	if (yPos <= 0 || yPos >= 300)
 	{
 		bHitLimit = true;
 	}

@@ -31,8 +31,10 @@ public:
 	void moveAI();
 	void followMallow();
 
-	float yPos = 500;
+	float yPos = 300;
 	float inc = 1.0f;
+	float xPos;
+	float left;
 	bool bHitLimit = false;
 	bool bInRange = false;
 	

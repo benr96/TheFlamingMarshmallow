@@ -104,7 +104,7 @@ public:
 	void LockLeftEnemy();
 
 	void TargetEnemy();
-	AAI *TestAI;
+	TArray<AAI*> TestAI;
 	FVector AILocation;
 	float mousePitch;
 	float mouseYaw;
