@@ -32,7 +32,7 @@ public:
 	void followMallow();
 
 	float yPos = 500;
-	float inc = 2;
+	float inc = 1.0f;
 	bool bHitLimit = false;
 	bool bInRange = false;
 	

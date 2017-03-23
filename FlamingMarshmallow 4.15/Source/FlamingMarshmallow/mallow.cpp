@@ -119,6 +119,8 @@ Amallow::Amallow()
 
 	// Variables for targeting system
 	fMouseSensitivity = 60.0f;
+	mousePitch = 0.0f;
+	mouseYaw = 0.0f;
 
 	right = false;
 	left = false;
@@ -191,6 +193,8 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	//control for targetting enemies
 	PlayerInputComponent->BindAction("LockOn", IE_Pressed, this, &Amallow::LockOnEnemy);
+	PlayerInputComponent->BindAction("LockRight", IE_Pressed, this, &Amallow::LockRightEnemy);
+	PlayerInputComponent->BindAction("LockLeft", IE_Pressed, this, &Amallow::LockLeftEnemy);
 
 	PlayerInputComponent->BindAction("ToggleFire", IE_Pressed, this, &Amallow::ToggleFire);
 }
@@ -409,22 +413,33 @@ void Amallow::LockOnEnemy()
 	else { UE_LOG(LogTemp, Warning, TEXT("Not Locked On")); }
 }
 
+void Amallow::LockRightEnemy()
+{
+	if (bLockOn)
+		UE_LOG(LogTemp, Warning, TEXT("Switched to right target."));
+}
+
+void Amallow::LockLeftEnemy()
+{
+	if (bLockOn)
+		UE_LOG(LogTemp, Warning, TEXT("Switched to left target."));
+}
+
 void Amallow::TargetEnemy()
 {
 	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI->GetActorLocation());
+	rotation.Pitch = mousePitch;
+	rotation.Yaw += 10 * mouseYaw;
 	Controller->SetControlRotation(rotation);
 }
 
 void Amallow::CameraPitch(float fAmount)
 {
 	// Will disable camera movement by player when 'TAB' has been pressed
-	if (!bLockOn)
+	AddControllerPitchInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
+	if (bLockOn)
 	{
-		AddControllerPitchInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
-	}
-	else
-	{
-		AddControllerPitchInput(0);
+		mousePitch -= fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds();
 	}
 }
 
@@ -437,7 +452,9 @@ void Amallow::CameraYaw(float fAmount)
 	}
 	else
 	{
-		AddControllerYawInput(0);
+		//AddControllerYawInput(0);
+		AddControllerYawInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
+		mouseYaw = fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds();
 	}
 }
 

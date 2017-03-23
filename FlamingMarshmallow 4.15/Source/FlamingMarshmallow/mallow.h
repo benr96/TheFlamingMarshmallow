@@ -99,11 +99,15 @@ public:
 	void jump();
 	void dashOn(float acc = 20000000000, float speed = 2500);
 	void dashOff(FTimerHandle handle, float *time);
-
 	void LockOnEnemy();
+	void LockRightEnemy();
+	void LockLeftEnemy();
+
 	void TargetEnemy();
 	AAI *TestAI;
 	FVector AILocation;
+	float mousePitch;
+	float mouseYaw;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

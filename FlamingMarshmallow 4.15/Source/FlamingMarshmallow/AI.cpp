@@ -51,7 +51,7 @@ void AAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AAI::moveAI()
 {
-	SetActorLocation(FVector(0, yPos, 150));
+	SetActorLocation(FVector(0, yPos, 0));
 
 	if (yPos <= 0 || yPos >= 500)
 	{
