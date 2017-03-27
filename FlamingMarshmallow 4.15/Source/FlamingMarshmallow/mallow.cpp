@@ -416,21 +416,52 @@ void Amallow::LockOnEnemy()
 void Amallow::LockRightEnemy()
 {
 	if (bLockOn)
+	{
 		UE_LOG(LogTemp, Warning, TEXT("Switched to right target."));
+	}
 }
 
 void Amallow::LockLeftEnemy()
 {
 	if (bLockOn)
+	{
 		UE_LOG(LogTemp, Warning, TEXT("Switched to left target."));
+	}
 }
 
 void Amallow::TargetEnemy()
 {
-	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI->GetActorLocation());
+	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), ai1->GetActorLocation());
 	rotation.Pitch = mousePitch;
 	rotation.Yaw += 10 * mouseYaw;
 	Controller->SetControlRotation(rotation);
+}
+
+void Amallow::SortEnemies()
+{
+	AI_Struct* tempAI;
+	TArray<AI_Struct*> enemy_Array;
+	AI_Struct* TestToArray = new AI_Struct();
+
+	for (int i = 0; i < TestAI.Num(); i++)
+	{
+		TestToArray->sAI = TestAI[i];
+		TestToArray->distanceFromChar = GetDistanceTo(TestAI[i]);
+		enemy_Array.Add(TestToArray);
+	}
+
+	for (int i = 0; i < enemy_Array.Num(); i++)
+	{
+		for (int j = 0; j < enemy_Array.Num() - i - 1; j++)
+		{
+			if (enemy_Array[j]>enemy_Array[j + 1])
+			{
+				tempAI = enemy_Array[j];
+				enemy_Array[j] = enemy_Array[j + 1];
+				enemy_Array[j + 1] = tempAI;
+			}
+		}
+	}
 }
 
 void Amallow::CameraPitch(float fAmount)
