@@ -25,9 +25,9 @@ void ATestGameMode::BeginPlay()
 	mainChar->SetActorRelativeLocation(FVector(-600, 0, 100));
 	
 	float i = 1;
-	AAI* testAI1 = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
-	testAI1->SetActorLocation(FVector(0.f, 0.f, 50.f));
-	mainChar->ai1 = testAI1;
+	//AAI* testAI1 = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
+	//testAI1->SetActorLocation(FVector(0.f, 0.f, 50.f));
+	//mainChar->ai1 = testAI1;
 	TArray<AAI*> enemies;
 	while (enemies.Num() < 3)
 	{

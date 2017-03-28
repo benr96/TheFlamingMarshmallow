@@ -115,6 +115,7 @@ public:
 		float distanceFromChar;
 		AAI* sAI;
 	};
+	TArray<AI_Struct*> enemy_Array;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

@@ -150,6 +150,11 @@ void Amallow::Tick( float DeltaTime )
 	{
 		TargetEnemy();
 	}
+	if (GEngine)
+	{
+		//Print debug message
+		GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation: %f - %f - %f"), Controller->GetControlRotation().Pitch, Controller->GetControlRotation().Roll, Controller->GetControlRotation().Yaw));
+	}
 
 }
 
@@ -399,8 +404,10 @@ void Amallow::TurnAtRate(float Rate)
 
 void Amallow::LockOnEnemy()
 {
+	SortEnemies();
 	if (bLockOn) 
 	{
+		
 		bLockOn = false;
 	}
 	else 
@@ -417,6 +424,7 @@ void Amallow::LockRightEnemy()
 {
 	if (bLockOn)
 	{
+		SortEnemies();
 		UE_LOG(LogTemp, Warning, TEXT("Switched to right target."));
 	}
 }
@@ -425,13 +433,14 @@ void Amallow::LockLeftEnemy()
 {
 	if (bLockOn)
 	{
+		SortEnemies();
 		UE_LOG(LogTemp, Warning, TEXT("Switched to left target."));
 	}
 }
 
 void Amallow::TargetEnemy()
 {
-	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), ai1->GetActorLocation());
+	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), enemy_Array[0]->sAI->GetActorLocation());
 	rotation.Pitch = mousePitch;
 	rotation.Yaw += 10 * mouseYaw;
 	Controller->SetControlRotation(rotation);
@@ -440,7 +449,7 @@ void Amallow::TargetEnemy()
 void Amallow::SortEnemies()
 {
 	AI_Struct* tempAI;
-	TArray<AI_Struct*> enemy_Array;
+	//TArray<AI_Struct*> enemy_Array;
 	AI_Struct* TestToArray = new AI_Struct();
 
 	for (int i = 0; i < TestAI.Num(); i++)
@@ -449,12 +458,13 @@ void Amallow::SortEnemies()
 		TestToArray->distanceFromChar = GetDistanceTo(TestAI[i]);
 		enemy_Array.Add(TestToArray);
 	}
-
+	Controller->GetControlRotation();
+	
 	for (int i = 0; i < enemy_Array.Num(); i++)
 	{
 		for (int j = 0; j < enemy_Array.Num() - i - 1; j++)
 		{
-			if (enemy_Array[j]>enemy_Array[j + 1])
+			if (enemy_Array[j]->distanceFromChar >enemy_Array[j + 1]->distanceFromChar)
 			{
 				tempAI = enemy_Array[j];
 				enemy_Array[j] = enemy_Array[j + 1];
