@@ -37,5 +37,6 @@ public:
 	float left;
 	bool bHitLimit = false;
 	bool bInRange = false;
+	float distToPlayer;
 	
 };

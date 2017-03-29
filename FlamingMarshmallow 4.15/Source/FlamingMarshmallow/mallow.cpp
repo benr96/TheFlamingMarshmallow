@@ -3,11 +3,15 @@
 #include "FlamingMarshmallow.h"
 #include "mallow.h"
 #include "Kismet/KismetMathLibrary.h"
+#include <vector>
+#include <algorithm>
 
 // Sets default values
 
 Amallow::Amallow()
 {
+	lowest = 0;
+	highest = 0;
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -404,7 +408,7 @@ void Amallow::TurnAtRate(float Rate)
 
 void Amallow::LockOnEnemy()
 {
-	SortEnemies();
+	//SortEnemies();
 	if (bLockOn) 
 	{
 		
@@ -424,7 +428,7 @@ void Amallow::LockRightEnemy()
 {
 	if (bLockOn)
 	{
-		SortEnemies();
+		FindClosest();
 		UE_LOG(LogTemp, Warning, TEXT("Switched to right target."));
 	}
 }
@@ -433,43 +437,42 @@ void Amallow::LockLeftEnemy()
 {
 	if (bLockOn)
 	{
-		SortEnemies();
+		FindFurthest();
 		UE_LOG(LogTemp, Warning, TEXT("Switched to left target."));
 	}
 }
 
 void Amallow::TargetEnemy()
 {
-	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), enemy_Array[0]->sAI->GetActorLocation());
+	for (int i = 0; i < TestAI.Num(); i++)
+	{
+		TestAI[i]->distToPlayer = GetDistanceTo(TestAI[i]);
+	}
+
+	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[lowest]->GetActorLocation());
 	rotation.Pitch = mousePitch;
 	rotation.Yaw += 10 * mouseYaw;
 	Controller->SetControlRotation(rotation);
 }
 
-void Amallow::SortEnemies()
+void Amallow::FindClosest()
 {
-	AI_Struct* tempAI;
-	//TArray<AI_Struct*> enemy_Array;
-	AI_Struct* TestToArray = new AI_Struct();
-
 	for (int i = 0; i < TestAI.Num(); i++)
 	{
-		TestToArray->sAI = TestAI[i];
-		TestToArray->distanceFromChar = GetDistanceTo(TestAI[i]);
-		enemy_Array.Add(TestToArray);
-	}
-	Controller->GetControlRotation();
-	
-	for (int i = 0; i < enemy_Array.Num(); i++)
-	{
-		for (int j = 0; j < enemy_Array.Num() - i - 1; j++)
+		if (TestAI[i]->distToPlayer < TestAI[lowest]->distToPlayer)
 		{
-			if (enemy_Array[j]->distanceFromChar >enemy_Array[j + 1]->distanceFromChar)
-			{
-				tempAI = enemy_Array[j];
-				enemy_Array[j] = enemy_Array[j + 1];
-				enemy_Array[j + 1] = tempAI;
-			}
+			lowest = i;
+		}
+	}
+}
+
+void Amallow::FindFurthest()
+{
+	for (int i = 0; i < TestAI.Num(); i++)
+	{
+		if (TestAI[i]->distToPlayer > TestAI[highest]->distToPlayer)
+		{
+			highest = i;
 		}
 	}
 }

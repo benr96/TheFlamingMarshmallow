@@ -104,18 +104,22 @@ public:
 	void LockRightEnemy();
 	void LockLeftEnemy();
 	void TargetEnemy();
-	void SortEnemies();
+	void FindClosest();
+	void FindFurthest();
 	TArray<AAI*> TestAI;
 	AAI* ai1;
 	FVector AILocation;
 	float mousePitch;
 	float mouseYaw;
+	int lowest;
+	int highest;
 	struct AI_Struct
 	{
 		float distanceFromChar;
 		AAI* sAI;
 	};
 	TArray<AI_Struct*> enemy_Array;
+	bool sortOrNah;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
