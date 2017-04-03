@@ -38,5 +38,6 @@ public:
 	bool bHitLimit = false;
 	bool bInRange = false;
 	float distToPlayer;
+	FRotator rotationFromChar;
 	
 };

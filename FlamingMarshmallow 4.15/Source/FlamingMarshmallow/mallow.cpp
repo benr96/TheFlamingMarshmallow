@@ -1,4 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+//TODO put limit on distance of AI from character for targeting
+//TODO allow some Yaw movement (make smoother)
+//TODO everytime TAB is pressed, make it target the closest enemy to center
+//TODO fix bug where it crashes when Q/E is pressed when on first/ last enemy
+//TODO sort array everytime enemy is added/deleted
+//TODO [maybe] make array to allow targeting only if enemy is close enough
 
 #include "FlamingMarshmallow.h"
 #include "mallow.h"
@@ -10,7 +16,7 @@
 
 Amallow::Amallow()
 {
-	lowest = 0;
+	next = 0;
 	highest = 0;
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -157,7 +163,31 @@ void Amallow::Tick( float DeltaTime )
 	if (GEngine)
 	{
 		//Print debug message
-		GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation: %f - %f - %f"), Controller->GetControlRotation().Pitch, Controller->GetControlRotation().Roll, Controller->GetControlRotation().Yaw));
+		GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation0: %f - %f - %f"), Controller->GetControlRotation().Pitch, Controller->GetControlRotation().Roll, Controller->GetControlRotation().Yaw));
+	}
+	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
+	rotation.Pitch = 0;
+	rotation.Roll = 0;
+	if (GEngine)
+	{
+		//Print debug message
+		GEngine->AddOnScreenDebugMessage(-20, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation1: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
+	}
+	rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[1]->GetActorLocation());
+	rotation.Pitch = 0;
+	rotation.Roll = 0;
+	if (GEngine)
+	{
+		//Print debug message
+		GEngine->AddOnScreenDebugMessage(-30, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation2: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
+	}
+	rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[2]->GetActorLocation());
+	rotation.Pitch = 0;
+	rotation.Roll = 0;
+	if (GEngine)
+	{
+		//Print debug message
+		GEngine->AddOnScreenDebugMessage(-40, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation3: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
 	}
 
 }
@@ -428,7 +458,7 @@ void Amallow::LockRightEnemy()
 {
 	if (bLockOn)
 	{
-		FindClosest();
+		FindRight();
 		UE_LOG(LogTemp, Warning, TEXT("Switched to right target."));
 	}
 }
@@ -437,7 +467,7 @@ void Amallow::LockLeftEnemy()
 {
 	if (bLockOn)
 	{
-		FindFurthest();
+		FindLeft();
 		UE_LOG(LogTemp, Warning, TEXT("Switched to left target."));
 	}
 }
@@ -447,32 +477,71 @@ void Amallow::TargetEnemy()
 	for (int i = 0; i < TestAI.Num(); i++)
 	{
 		TestAI[i]->distToPlayer = GetDistanceTo(TestAI[i]);
+		TestAI[i]->rotationFromChar = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[i]->GetActorLocation());
 	}
 
-	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[lowest]->GetActorLocation());
+	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
 	rotation.Pitch = mousePitch;
 	rotation.Yaw += 10 * mouseYaw;
-	Controller->SetControlRotation(rotation);
+	Controller->SetControlRotation(rotation); 
+	if (GEngine)
+	{
+		//Print debug message
+		GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation00: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
+	}
 }
 
-void Amallow::FindClosest()
+void Amallow::FindRight()
 {
 	for (int i = 0; i < TestAI.Num(); i++)
 	{
-		if (TestAI[i]->distToPlayer < TestAI[lowest]->distToPlayer)
+		/*if (TestAI[i]->distToPlayer < TestAI[lowest]->distToPlayer)
 		{
 			lowest = i;
+		}*/
+		if (TestAI[i]->rotationFromChar.Yaw > TestAI[next]->rotationFromChar.Yaw)
+		{
+			next++;
+			break;
 		}
 	}
 }
 
-void Amallow::FindFurthest()
+void Amallow::FindLeft()
 {
 	for (int i = 0; i < TestAI.Num(); i++)
 	{
-		if (TestAI[i]->distToPlayer > TestAI[highest]->distToPlayer)
+		/*if (TestAI[i]->distToPlayer > TestAI[lowest]->distToPlayer)
 		{
-			highest = i;
+			lowest = i;
+		}*/
+		if (TestAI[i]->rotationFromChar.Yaw < TestAI[next]->rotationFromChar.Yaw)
+		{
+			next--;
+			break;
+		}
+	}
+}
+
+void Amallow::SortEnemies()
+{
+	AAI* temp;
+	for (int i = 0; i < TestAI.Num(); i++)
+	{
+		int swaps = 0;
+		for (int j = 0; j < TestAI.Num()-i-1; j++)
+		{
+			if (TestAI[j]->rotationFromChar.Yaw > TestAI[j + 1]->rotationFromChar.Yaw)
+			{
+				temp = TestAI[j];
+				TestAI[j] = TestAI[j + 1];
+				TestAI[j + 1] = temp;
+				swaps++;
+			}
+		}
+		if (swaps == 0)
+		{
+			break;
 		}
 	}
 }

@@ -104,18 +104,21 @@ public:
 	void LockRightEnemy();
 	void LockLeftEnemy();
 	void TargetEnemy();
-	void FindClosest();
-	void FindFurthest();
+	void FindRight();
+	void FindLeft();
+	void SortEnemies();
+
 	TArray<AAI*> TestAI;
 	AAI* ai1;
 	FVector AILocation;
 	float mousePitch;
 	float mouseYaw;
-	int lowest;
+	int next;
 	int highest;
 	struct AI_Struct
 	{
 		float distanceFromChar;
+		FRotator rotationFromCenter;
 		AAI* sAI;
 	};
 	TArray<AI_Struct*> enemy_Array;
