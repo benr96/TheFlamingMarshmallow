@@ -29,10 +29,10 @@ void ATestGameMode::BeginPlay()
 	//testAI1->SetActorLocation(FVector(0.f, 0.f, 50.f));
 	//mainChar->ai1 = testAI1;
 	TArray<AAI*> enemies;
-	while (enemies.Num() < 3)
+	while (enemies.Num() < 5)
 	{
 		AAI* testAI = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
-		testAI->SetActorLocation(FVector(i*60.f, 0.f, 50.f));
+		testAI->SetActorLocation(FVector(i*60.f, i*10.f, 50.f));
 		if (enemies.Num() % 2 == 0)
 		{
 			testAI->left *= -1;
@@ -42,6 +42,12 @@ void ATestGameMode::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("%d"), enemies.Num());
 		i++;
 	}
+}
+
+// Called every frame
+void ATestGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 APawn* ATestGameMode::SpawnDefaultPawnFor()

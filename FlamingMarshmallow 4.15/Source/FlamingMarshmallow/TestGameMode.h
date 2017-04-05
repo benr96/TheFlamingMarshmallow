@@ -12,7 +12,14 @@ UCLASS()
 class FLAMINGMARSHMALLOW_API ATestGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
+public:
 	ATestGameMode();
-	void BeginPlay();
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
+	// Called every frame
+	virtual void Tick(float DeltaTime) override;
 	APawn* SpawnDefaultPawnFor();
 };

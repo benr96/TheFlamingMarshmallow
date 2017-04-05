@@ -26,6 +26,7 @@ AAI::AAI()
 	}
 
 	left = 1;
+	health = 100;
 }
 
 // Called when the game starts or when spawned
@@ -40,7 +41,11 @@ void AAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	moveAI();
-
+	//health -= .5f;
+	if (health <= 0)
+	{
+		Destroy();
+	}
 }
 
 // Called to bind functionality to input
@@ -68,7 +73,7 @@ void AAI::moveAI()
 		inc *= -1;
 	}
 
-	yPos += inc;
+	//yPos += inc;
 }
 
 void AAI::followMallow()

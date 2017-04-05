@@ -31,6 +31,11 @@ public:
 	void moveAI();
 	void followMallow();
 
+	//Combat variables
+	float health;
+	float damage;
+
+	//Targeting variables
 	float yPos = 300;
 	float inc = 1.0f;
 	float xPos;

@@ -2,9 +2,9 @@
 //TODO put limit on distance of AI from character for targeting
 //TODO allow some Yaw movement (make smoother)
 //TODO everytime TAB is pressed, make it target the closest enemy to center
-//TODO fix bug where it crashes when Q/E is pressed when on first/ last enemy
 //TODO sort array everytime enemy is added/deleted
 //TODO [maybe] make array to allow targeting only if enemy is close enough
+//TODO Fix bug when looking form behind while targeting
 
 #include "FlamingMarshmallow.h"
 #include "mallow.h"
@@ -132,6 +132,10 @@ Amallow::Amallow()
 	mousePitch = 0.0f;
 	mouseYaw = 0.0f;
 
+	//combat
+	health = 100;
+	damage = 25;
+
 	right = false;
 	left = false;
 	forward = false;
@@ -160,6 +164,7 @@ void Amallow::Tick( float DeltaTime )
 	{
 		TargetEnemy();
 	}
+	/*
 	if (GEngine)
 	{
 		//Print debug message
@@ -188,7 +193,7 @@ void Amallow::Tick( float DeltaTime )
 	{
 		//Print debug message
 		GEngine->AddOnScreenDebugMessage(-40, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation3: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
-	}
+	}*/
 
 }
 
@@ -234,6 +239,11 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("LockOn", IE_Pressed, this, &Amallow::LockOnEnemy);
 	PlayerInputComponent->BindAction("LockRight", IE_Pressed, this, &Amallow::LockRightEnemy);
 	PlayerInputComponent->BindAction("LockLeft", IE_Pressed, this, &Amallow::LockLeftEnemy);
+
+
+	//control for attacking
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &Amallow::Attack);
+
 
 	PlayerInputComponent->BindAction("ToggleFire", IE_Pressed, this, &Amallow::ToggleFire);
 }
@@ -493,33 +503,19 @@ void Amallow::TargetEnemy()
 
 void Amallow::FindRight()
 {
-	for (int i = 0; i < TestAI.Num(); i++)
+	SortEnemies();
+	if (next < TestAI.Num()-1)
 	{
-		/*if (TestAI[i]->distToPlayer < TestAI[lowest]->distToPlayer)
-		{
-			lowest = i;
-		}*/
-		if (TestAI[i]->rotationFromChar.Yaw > TestAI[next]->rotationFromChar.Yaw)
-		{
-			next++;
-			break;
-		}
+		next++;
 	}
 }
 
 void Amallow::FindLeft()
 {
-	for (int i = 0; i < TestAI.Num(); i++)
+	SortEnemies();
+	if (next >= 1)
 	{
-		/*if (TestAI[i]->distToPlayer > TestAI[lowest]->distToPlayer)
-		{
-			lowest = i;
-		}*/
-		if (TestAI[i]->rotationFromChar.Yaw < TestAI[next]->rotationFromChar.Yaw)
-		{
-			next--;
-			break;
-		}
+		next--;
 	}
 }
 
@@ -542,6 +538,21 @@ void Amallow::SortEnemies()
 		if (swaps == 0)
 		{
 			break;
+		}
+	}
+}
+
+void Amallow::Attack()
+{
+	if(bLockOn)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
+		TestAI[next]->health -= 20;
+		if (TestAI[next]->health <= 0)
+		{
+			TestAI.RemoveAt(next);
+			SortEnemies();
+			bLockOn = false;
 		}
 	}
 }

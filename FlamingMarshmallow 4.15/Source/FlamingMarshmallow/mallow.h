@@ -100,6 +100,7 @@ public:
 	void dashOn(float acc = 20000000000, float speed = 2500);
 	void dashOff(FTimerHandle handle, float *time);
 
+	//Targeting functions and variables
 	void LockOnEnemy();
 	void LockRightEnemy();
 	void LockLeftEnemy();
@@ -123,6 +124,12 @@ public:
 	};
 	TArray<AI_Struct*> enemy_Array;
 	bool sortOrNah;
+
+	//Combat variables and functions
+	float health;
+	float damage;
+
+	void Attack();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
