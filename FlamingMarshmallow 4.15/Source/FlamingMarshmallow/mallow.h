@@ -108,6 +108,8 @@ public:
 	void FindRight();
 	void FindLeft();
 	void SortEnemies();
+	void CheckRange();
+	void FindClosest();
 
 	TArray<AAI*> TestAI;
 	AAI* ai1;
@@ -123,13 +125,18 @@ public:
 		AAI* sAI;
 	};
 	TArray<AI_Struct*> enemy_Array;
-	bool sortOrNah;
+	bool bFirstLock = false;
+	int closest = 0;
 
 	//Combat variables and functions
 	float health;
 	float damage;
+	bool bAttackDelay = false;
+	float attackTime = 0;
+	FTimerHandle attackHandle;
 
 	void Attack();
+	void DelayAttack();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

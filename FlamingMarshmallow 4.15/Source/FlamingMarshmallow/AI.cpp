@@ -80,3 +80,7 @@ void AAI::followMallow()
 {
 }
 
+void AAI::Attack()
+{
+}
+
