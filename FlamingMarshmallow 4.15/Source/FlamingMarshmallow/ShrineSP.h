@@ -22,21 +22,37 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *base;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *stand;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *torus;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *pillar1;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *pillar2;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *pillar3;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *pillar4;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *pillar1Top;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *pillar2Top;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *pillar3Top;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UStaticMeshComponent *pillar4Top;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UParticleSystemComponent *torusPS;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UParticleSystemComponent *pillar1PS;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UParticleSystemComponent *pillar2PS;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UParticleSystemComponent *pillar3PS;
+	UPROPERTY(VisibleAnywhere, Category = Visual)
 	UParticleSystemComponent *pillar4PS;
 
 	float TimeRunning;

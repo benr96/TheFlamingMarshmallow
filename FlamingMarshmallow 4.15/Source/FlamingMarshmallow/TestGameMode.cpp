@@ -6,23 +6,32 @@
 #include "ShrineSP.h"
 #include "AI.h"
 
+
+#include "EngineUtils.h"
+#include "MHUD.h"
+
 ATestGameMode::ATestGameMode()
 {
-	static ConstructorHelpers::FClassFinder<AHUD> MHUDClass(TEXT("/Game/MHUD"));
+		HUDClass = AMHUD::StaticClass();
 
-	if (MHUDClass.Class != NULL)
-	{
-		HUDClass = MHUDClass.Class;
-	}	
 }
 
 void ATestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	DefaultPawnClass = Amallow::StaticClass();
 
-	Amallow* mainChar = GetWorld()->SpawnActor<Amallow>(Amallow::StaticClass());
-	mainChar->SetActorRelativeLocation(FVector(-600, 0, 100));
+	for (TObjectIterator<ACharacter> Itr; Itr; ++Itr)
+	{
+		// Access the subclass instance with the * or -> operators.
+		FString name = Itr->GetName();
+
+		if (name == "Main")
+		{
+			Itr->AutoPossessPlayer = EAutoReceiveInput::Player0;
+			Itr->AutoReceiveInput = EAutoReceiveInput::Player0;
+		}
+	}
+	
 
 	
 

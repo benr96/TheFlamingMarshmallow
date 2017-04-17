@@ -1,7 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "FlamingMarshmallow.h"
+#include "MHUD.h"
 #include "mallow.h"
+#include "Blueprint/UserWidget.h"
+
 
 // Sets default values
 
@@ -12,14 +15,13 @@ Amallow::Amallow()
 
 	//size of capsule
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 35.0f);
-	SetActorLocation(FVector(-600,0,100));
 
 	//creating static mesh
 	MallowVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MallowVisual"));
 	MallowVisual->SetupAttachment(RootComponent);
 
 	//find the asset we want to use
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> MallowVisualAsset(TEXT("/Game/marshmallowV5_Marshmallow_Body"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> MallowVisualAsset(TEXT("/Game/MallowParts/marshmallowV5_Marshmallow_Body"));
 
 	//if it found the asset position it correctly
 	if (MallowVisualAsset.Succeeded())
@@ -34,8 +36,8 @@ Amallow::Amallow()
 	LeftEyeVis->SetupAttachment(MallowVisual);
 	RightEyeVis->SetupAttachment(MallowVisual);
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> LeftEyeAsset(TEXT("/Game/marshmallowV5_left_eye"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> RightEyeAsset(TEXT("/Game/marshmallowV5_right_eye"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> LeftEyeAsset(TEXT("/Game/MallowParts/marshmallowV5_left_eye"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> RightEyeAsset(TEXT("/Game/MallowParts/marshmallowV5_right_eye"));
 
 	if (LeftEyeAsset.Succeeded())
 	{
@@ -74,7 +76,7 @@ Amallow::Amallow()
 	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
 
 	//setting force in air
-	GetCharacterMovement()->AirControl = 0.1f;
+	GetCharacterMovement()->AirControl = 10.0f;
 
 
 	//CAMERA
@@ -112,10 +114,6 @@ Amallow::Amallow()
 		Flames->SetTemplate(FlamesAsset.Object);
 	}
 
-	AutoPossessPlayer = EAutoReceiveInput::Player0;
-	AutoReceiveInput = EAutoReceiveInput::Player0;
-
-
 	// Variables for targeting system
 	fMouseSensitivity = 60.0f;
 
@@ -127,13 +125,23 @@ Amallow::Amallow()
 	doubleMove = false;
 
 	originalTime = 0.05;
+
+	bMenuShow = false;
+	bInvShow = false;
+	bAcceptInput = true;
+
+	dashState = 0.5;
+
 }
 
 // Called when the game starts or when spawned
 void Amallow::BeginPlay()
 {
 	Super::BeginPlay();
+	HUD = (AMHUD*)(GetWorld()->GetFirstPlayerController()->GetHUD());
+	PC = (AUI_Controller*)(GetWorld()->GetFirstPlayerController());
 
+	PC->mainChar = this;
 }
 
 // Called every frame
@@ -142,6 +150,7 @@ void Amallow::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	movementControl();
+
 
 }
 
@@ -175,7 +184,14 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("MoveRight", IE_Released, this, &Amallow::StopRight);
 	PlayerInputComponent->BindAction("MoveLeft", IE_Released, this, &Amallow::StopLeft);
 
+	PlayerInputComponent->BindAction("Menu", IE_Pressed, this, &Amallow::ToggleMenu);
+	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &Amallow::ToggleInv);
+	PlayerInputComponent->BindAction("Pickup", IE_Pressed, this, &Amallow::Pickup);
+	PlayerInputComponent->BindAction("Pickup", IE_Released, this, &Amallow::StopPickup);
+	PlayerInputComponent->BindAction("LMouseClicked", IE_Pressed, this, &Amallow::LMouseClicked).bExecuteWhenPaused = true;
+	PlayerInputComponent->BindAction("LMouseClicked", IE_Released, this, &Amallow::LMouseReleased).bExecuteWhenPaused = true;
 
+	
 	//turning and camera control
 	PlayerInputComponent->BindAxis("Turn", this, &Amallow::CameraYaw);
 	PlayerInputComponent->BindAxis("TurnRate", this, &Amallow::TurnAtRate);
@@ -191,7 +207,10 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void Amallow::ToggleFire()
 {
-	Flames->ToggleActive();
+	if (bAcceptInput == true)
+	{
+		Flames->ToggleActive();
+	}
 }
 
 void Amallow::movementControl()
@@ -234,22 +253,29 @@ void Amallow::movementControl()
 //the move functions check if timer is active, if so, increase max speed/acc for dashing/dodging
 void Amallow::MoveForward()
 {
-	if (GetWorldTimerManager().IsTimerActive(ForwardTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
+	if (bAcceptInput == true)
 	{
-		dashOn(20000000000, 5000);
-	}
+		if (GetWorldTimerManager().IsTimerActive(ForwardTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
+		{
+			dashOn(20000000000, 5000);
+		}
 
-	forward = true;
+		forward = true;
+	}
 }
 
 //the timers are started when the button is released, after release you have 0.05 seconds to press it again to initiate dash
 void Amallow::StopForward()
 {
-	if (GetCharacterMovement()->Velocity.Z == 0)
+	if (bAcceptInput == true)
 	{
-		GetWorldTimerManager().SetTimer(ForwardTimer, this, &Amallow::IncFTime, 0.05f, true);
+		if (GetCharacterMovement()->Velocity.Z == 0)
+		{
+			GetWorldTimerManager().SetTimer(ForwardTimer, this, &Amallow::IncFTime, 0.05f, true);
+		}
+		forward = false;
 	}
-	forward = false;
+
 }
 
 void Amallow::IncFTime()
@@ -264,21 +290,28 @@ void Amallow::IncFTime()
 
 void Amallow::MoveBack()
 {
-	if (GetWorldTimerManager().IsTimerActive(BackTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
+	if (bAcceptInput == true)
 	{
-		dashOn();
-	}
+		if (GetWorldTimerManager().IsTimerActive(BackTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
+		{
+			dashOn();
+		}
 
-	back = true;
+		back = true;
+	}
 }
 
 void Amallow::StopBack()
 {
-	if (GetCharacterMovement()->Velocity.Z == 0)
+	if (bAcceptInput == true)
 	{
-		GetWorldTimerManager().SetTimer(BackTimer, this, &Amallow::IncBTime, 0.05f, true);
+		if (GetCharacterMovement()->Velocity.Z == 0)
+		{
+			GetWorldTimerManager().SetTimer(BackTimer, this, &Amallow::IncBTime, 0.05f, true);
+		}
+		back = false;
 	}
-	back = false;
+
 }
 
 void Amallow::IncBTime()
@@ -293,21 +326,27 @@ void Amallow::IncBTime()
 
 void Amallow::MoveLeft()
 {
-	if (GetWorldTimerManager().IsTimerActive(LeftTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
+	if (bAcceptInput == true)
 	{
-		dashOn();
-	}
+		if (GetWorldTimerManager().IsTimerActive(LeftTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
+		{
+			dashOn();
+		}
 
-	left = true;
+		left = true;
+	}
 }
 
 void Amallow::StopLeft()
 {
-	if (GetCharacterMovement()->Velocity.Z == 0)
+	if (bAcceptInput == true)
 	{
-		GetWorldTimerManager().SetTimer(LeftTimer, this, &Amallow::IncLTime, 0.05f, true);
+		if (GetCharacterMovement()->Velocity.Z == 0)
+		{
+			GetWorldTimerManager().SetTimer(LeftTimer, this, &Amallow::IncLTime, 0.05f, true);
+		}
+		left = false;
 	}
-	left = false;
 }
 
 void Amallow::IncLTime()
@@ -322,21 +361,27 @@ void Amallow::IncLTime()
 
 void Amallow::MoveRight()
 {
-	if (GetWorldTimerManager().IsTimerActive(RightTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
+	if (bAcceptInput == true)
 	{
-		dashOn();
-	}
+		if (GetWorldTimerManager().IsTimerActive(RightTimer) == true && GetCharacterMovement()->Velocity.Z == 0)
+		{
+			dashOn();
+		}
 
-	right = true;
+		right = true;
+	}
 }
 
 void Amallow::StopRight()
 {
-	if (GetCharacterMovement()->Velocity.Z == 0)
+	if (bAcceptInput == true)
 	{
-		GetWorldTimerManager().SetTimer(RightTimer, this, &Amallow::IncRTime, 0.05f, true);
+		if (GetCharacterMovement()->Velocity.Z == 0)
+		{
+			GetWorldTimerManager().SetTimer(RightTimer, this, &Amallow::IncRTime, 0.05f, true);
+		}
+		right = false;
 	}
-	right = false;
 }
 
 void Amallow::IncRTime()
@@ -351,79 +396,103 @@ void Amallow::IncRTime()
 
 void Amallow::jump()
 {
-	float Z = GetCharacterMovement()->Velocity.Z;
-	float changeZ = 500;//make this relative to current Z so it always has a similar increase(currently double jumping at different levels of normal jump changes overall jump height quite a lot)
-
-	if (midJump == true)
+	if (bAcceptInput == true)
 	{
-		GetCharacterMovement()->Velocity += FVector(0, 0, changeZ);//maybe adding straight to velocity isn't the best way to do this
-		midJump = false;
-	}
+		float Z = GetCharacterMovement()->Velocity.Z;
+		float changeZ = 500;//make this relative to current Z so it always has a similar increase(currently double jumping at different levels of normal jump changes overall jump height quite a lot)
 
-	if (Z == 0)
-	{
-		Jump();
-		midJump = true;
+		if (midJump == true)
+		{
+			GetCharacterMovement()->Velocity += FVector(0, 0, changeZ);//maybe adding straight to velocity isn't the best way to do this
+			midJump = false;
+		}
+
+		if (Z == 0)
+		{
+			Jump();
+			midJump = true;
+		}
 	}
 }
 
 void Amallow::StartRun()
 {
-	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed*1.5;
+	if (bAcceptInput == true)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = MaxSpeed * 1.5;
+	}
 }
 
 void Amallow::StopRun()
 {
-	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
+	if (bAcceptInput == true)
+	{
+		GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
+	}
 }
 
 void Amallow::LookUpAtRate(float Rate)
 {
-	AddControllerPitchInput(Rate * LookRate * GetWorld()->GetDeltaSeconds());
+	if (bAcceptInput == true)
+	{
+		AddControllerPitchInput(Rate * LookRate * GetWorld()->GetDeltaSeconds());
+	}
 }
 
 void Amallow::TurnAtRate(float Rate)
 {
-	AddControllerYawInput(Rate * TurnRate * GetWorld()->GetDeltaSeconds());
+	if (bAcceptInput == true)
+	{
+		AddControllerYawInput(Rate * TurnRate * GetWorld()->GetDeltaSeconds());
+	}
 }
 
 void Amallow::LockOnEnemy()
 {
-	if (bLockOn) {
-		bLockOn = false;
-	}
-	else {
-		bLockOn = true;
-	}
+	if (bAcceptInput == true)
+	{
+		if (bLockOn) {
+			bLockOn = false;
+		}
+		else {
+			bLockOn = true;
+		}
 
-	// Test messages
-	if (bLockOn) { UE_LOG(LogTemp, Warning, TEXT("Locked On")); }
-	else { UE_LOG(LogTemp, Warning, TEXT("Not Locked On")); }
+		// Test messages
+		if (bLockOn) { UE_LOG(LogTemp, Warning, TEXT("Locked On")); }
+		else { UE_LOG(LogTemp, Warning, TEXT("Not Locked On")); }
+	}
 }
 
 void Amallow::CameraPitch(float fAmount)
 {
-	// Will disable camera movement by player when 'TAB' has been pressed
-	if (!bLockOn)
+	if (bAcceptInput == true)
 	{
-		AddControllerPitchInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
-	}
-	else
-	{
-		AddControllerPitchInput(0);
+		// Will disable camera movement by player when 'TAB' has been pressed
+		if (!bLockOn)
+		{
+			AddControllerPitchInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
+		}
+		else
+		{
+			AddControllerPitchInput(0);
+		}
 	}
 }
 
 void Amallow::CameraYaw(float fAmount)
 {
-	// Will disable camera movement by player when 'TAB' has been pressed
-	if (!bLockOn)
+	if (bAcceptInput == true)
 	{
-		AddControllerYawInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
-	}
-	else
-	{
-		AddControllerYawInput(0);
+		// Will disable camera movement by player when 'TAB' has been pressed
+		if (!bLockOn)
+		{
+			AddControllerYawInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
+		}
+		else
+		{
+			AddControllerYawInput(0);
+		}
 	}
 }
 
@@ -451,14 +520,72 @@ void Amallow::dashOff(FTimerHandle handle, float *time)
 	*time = originalTime;
 	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
 	GetCharacterMovement()->MaxAcceleration = 2048;
-	GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity/10;
+	GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity / 10;
 	doubleMove = false;
+	
 }
 
 void Amallow::dashOn(float acc, float speed)
 {
-	GetCharacterMovement()->MaxAcceleration = acc ;
-	GetCharacterMovement()->MaxWalkSpeed = speed;
-	doubleMove = true;
+	if (dashState >= 0.33)
+	{
+		GetCharacterMovement()->MaxAcceleration = acc;
+		GetCharacterMovement()->MaxWalkSpeed = speed;
+		doubleMove = true;
+		dashState -= 0.33;
+	}
 }
 
+void Amallow::ToggleMenu()
+{
+	if (bMenuShow == false)
+	{
+		PC->Menu->SetVisibility(ESlateVisibility::Visible);
+		bMenuShow = true;
+		Pause();
+	}
+}
+
+void Amallow::ToggleInv()
+{
+	if (bInvShow == false)
+	{
+		bInvShow = true;
+		HUD->bDrawInv = true;
+		//PC->Inv->SetVisibility(ESlateVisibility::Visible);
+		Pause();
+	}
+	else
+	{
+		bInvShow = false;
+		HUD->bDrawInv = false;
+	}
+}
+
+void Amallow::Pause()
+{
+	bAcceptInput = false;
+	PC->bShowMouseCursor = true;
+	PC->HUD->SetVisibility(ESlateVisibility::Hidden);
+	PC->SetPause(true);
+}
+
+void Amallow::Pickup()
+{
+	bPickup = true;
+}
+
+void Amallow::StopPickup()
+{
+	bPickup = false;
+}
+
+void Amallow::LMouseClicked()
+{
+	HUD->bLMouseClicked = true;
+}
+
+void Amallow::LMouseReleased()
+{
+	HUD->bLMouseClicked = false;
+}

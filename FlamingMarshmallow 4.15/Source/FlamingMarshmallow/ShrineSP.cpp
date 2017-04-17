@@ -39,27 +39,27 @@ AShrineSP::AShrineSP()
 
 	
 	//load the assets
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> baseAsset(TEXT("/Game/Shrine_Cylinder"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> standAsset(TEXT("/Game/Shrine_Cube"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> baseAsset(TEXT("/Game/ShrineParts/Shrine_Cylinder"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> standAsset(TEXT("/Game/ShrineParts/Shrine_Cube"));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> torusAsset(TEXT("/Game/Shrine_Torus"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> torusAsset(TEXT("/Game/ShrineParts/Shrine_Torus"));
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> torusPSAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
 
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar1Asset(TEXT("/Game/Shrine_Cylinder_001"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar1TopAsset(TEXT("/Game/Shrine_Cylinder_002"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar1Asset(TEXT("/Game/ShrineParts/Shrine_Cylinder_001"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar1TopAsset(TEXT("/Game/ShrineParts/Shrine_Cylinder_002"));
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> pillar1PSAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar2Asset(TEXT("/Game/Shrine_Cylinder_003"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar2TopAsset(TEXT("/Game/Shrine_Cylinder_004"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar2Asset(TEXT("/Game/ShrineParts/Shrine_Cylinder_003"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar2TopAsset(TEXT("/Game/ShrineParts/Shrine_Cylinder_004"));
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> pillar2PSAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar3Asset(TEXT("/Game/Shrine_Cylinder_005"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar3TopAsset(TEXT("/Game/Shrine_Cylinder_006"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar3Asset(TEXT("/Game/ShrineParts/Shrine_Cylinder_005"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar3TopAsset(TEXT("/Game/ShrineParts/Shrine_Cylinder_006"));
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> pillar3PSAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar4Asset(TEXT("/Game/Shrine_Cylinder_007"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar4TopAsset(TEXT("/Game/Shrine_Cylinder_008"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar4Asset(TEXT("/Game/ShrineParts/Shrine_Cylinder_007"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> pillar4TopAsset(TEXT("/Game/ShrineParts/Shrine_Cylinder_008"));
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> pillar4PSAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
 	
 	//if asset loading succeeded put it on static mesh

@@ -3,9 +3,12 @@
 //face where camera is looking, maybe only for when locked on
 //limit camera movement so you don't glitch through mallow
 #pragma once
-
 #include "GameFramework/Character.h"
+#include "MHUD.h"
+#include "UI_Controller.h"
 #include "mallow.generated.h"
+
+
 
 UCLASS()
 class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
@@ -13,8 +16,9 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 	GENERATED_BODY()
 
 	// Sets default values for this character's properties
-
+public:
 	Amallow();
+
 
 	//camera components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -36,7 +40,7 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 	UTextRenderComponent* Speed;
 
 
-public:
+
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float TurnRate;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
@@ -89,6 +93,7 @@ public:
 	float originalTime;
 	bool doubleMove;
 
+
 	FVector CheckDirection(FString Axis);
 	void movementControl();
 	void TurnAtRate(float Value);
@@ -99,7 +104,29 @@ public:
 	void dashOn(float acc = 20000000000, float speed = 2500);
 	void dashOff(FTimerHandle handle, float *time);
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "C++ Variables")
+	float dashState;
+
 	void LockOnEnemy();
+
+	bool bMenuShow;
+	bool bInvShow;
+
+	void ToggleMenu();
+	void ToggleInv();
+	void Pause();
+	void Pickup();
+	void StopPickup();
+	bool bPickup;
+	AMHUD *HUD;
+	void LMouseClicked();
+	void LMouseReleased();
+
+	TArray<FCoreItemData> Inventory;
+
+	AUI_Controller *PC;
+
+	bool bAcceptInput;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
