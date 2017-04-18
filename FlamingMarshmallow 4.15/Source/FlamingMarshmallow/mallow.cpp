@@ -1,15 +1,24 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+//TODO allow some Yaw movement (make smoother)
+//TODO sort array everytime enemy is added/deleted
+//TODO Fix bug when looking form behind while targeting
 
 #include "FlamingMarshmallow.h"
 #include "MHUD.h"
 #include "mallow.h"
 #include "Blueprint/UserWidget.h"
 
+#include "Kismet/KismetMathLibrary.h"
+#include <vector>
+#include <algorithm>
 
 // Sets default values
 
 Amallow::Amallow()
 {
+	next = 0;
+	highest = 0;
+
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -116,6 +125,12 @@ Amallow::Amallow()
 
 	// Variables for targeting system
 	fMouseSensitivity = 60.0f;
+	mousePitch = 0.0f;
+	mouseYaw = 0.0f;
+
+	//combat
+	health = 100;
+	damage = 25;
 
 	right = false;
 	left = false;
@@ -152,6 +167,15 @@ void Amallow::Tick( float DeltaTime )
 	movementControl();
 
 
+	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("%f"), health));
+	if (bLockOn)
+	{
+		TargetEnemy();
+	}
+	if (health <= 0)
+	{
+		Destroy();
+	}
 }
 
 // Called to bind functionality to input
@@ -201,6 +225,13 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 	//control for targetting enemies
 	PlayerInputComponent->BindAction("LockOn", IE_Pressed, this, &Amallow::LockOnEnemy);
+	PlayerInputComponent->BindAction("LockRight", IE_Pressed, this, &Amallow::LockRightEnemy);
+	PlayerInputComponent->BindAction("LockLeft", IE_Pressed, this, &Amallow::LockLeftEnemy);
+
+
+	//control for attacking
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &Amallow::Attack);
+
 
 	PlayerInputComponent->BindAction("ToggleFire", IE_Pressed, this, &Amallow::ToggleFire);
 }
@@ -451,10 +482,14 @@ void Amallow::LockOnEnemy()
 {
 	if (bAcceptInput == true)
 	{
-		if (bLockOn) {
+		if (bLockOn) 
+		{
 			bLockOn = false;
 		}
-		else {
+		else 
+		{
+			next = closest;
+			bFirstLock = true;
 			bLockOn = true;
 		}
 
@@ -464,19 +499,108 @@ void Amallow::LockOnEnemy()
 	}
 }
 
+void Amallow::LockRightEnemy()
+{
+	if (bLockOn)
+	{
+		FindRight();
+		UE_LOG(LogTemp, Warning, TEXT("Switched to right target."));
+	}
+}
+
+void Amallow::LockLeftEnemy()
+{
+	if (bLockOn)
+	{
+		FindLeft();
+		UE_LOG(LogTemp, Warning, TEXT("Switched to left target."));
+	}
+}
+
+void Amallow::TargetEnemy()
+{
+	if (bFirstLock)
+	{
+		FindClosest();
+		next = closest;
+		bFirstLock = false;
+	}
+
+	if (TestAI[next]->bInTargetRange)
+	{
+
+		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
+		rotation.Pitch = mousePitch;
+		rotation.Yaw += 10 * mouseYaw;
+		Controller->SetControlRotation(rotation); 
+	}
+	else
+	{
+		//bLockOn = false;
+		GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("No targets in range.")));
+	}
+}
+
+void Amallow::FindClosest()
+{
+	closest = 0;
+	for (int i = 0; i < TestAI.Num(); i++)
+	{
+		if (TestAI[closest]->distToPlayer > TestAI[i]->distToPlayer)
+		{
+			closest = i;
+		}
+	}
+}
+
+void Amallow::FindRight()
+{
+	SortEnemies();
+	if (next < TestAI.Num()-1)
+	{
+		next++;
+	}
+}
+
+void Amallow::FindLeft()
+{
+	SortEnemies();
+	if (next > 0)
+	{
+		next--;
+	}
+}
+
+void Amallow::SortEnemies()
+{
+	AAI* temp;
+	for (int i = 0; i < TestAI.Num(); i++)
+	{
+		int swaps = 0;
+		for (int j = 0; j < TestAI.Num()-i-1; j++)
+		{
+			if (TestAI[j]->rotationFromChar.Yaw > TestAI[j + 1]->rotationFromChar.Yaw)
+			{
+				temp = TestAI[j];
+				TestAI[j] = TestAI[j + 1];
+				TestAI[j + 1] = temp;
+				swaps++;
+			}
+		}
+		if (swaps == 0)
+		{
+			break;
+		}
+	}
+}
+
 void Amallow::CameraPitch(float fAmount)
 {
-	if (bAcceptInput == true)
+	// Will disable camera movement by player when 'TAB' has been pressed
+	AddControllerPitchInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
+	if (bLockOn)
 	{
-		// Will disable camera movement by player when 'TAB' has been pressed
-		if (!bLockOn)
-		{
-			AddControllerPitchInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
-		}
-		else
-		{
-			AddControllerPitchInput(0);
-		}
+		mousePitch -= fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds();
 	}
 }
 
@@ -491,9 +615,45 @@ void Amallow::CameraYaw(float fAmount)
 		}
 		else
 		{
-			AddControllerYawInput(0);
+			//AddControllerYawInput(0);
+			AddControllerYawInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
+			mouseYaw = fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds();
 		}
 	}
+}
+
+void Amallow::Attack()
+{
+	if (bLockOn == true && TestAI[next]->bInAttackRange == true && attackTime == 0 && !GetWorldTimerManager().IsTimerActive(attackHandle))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
+		TestAI[next]->health -= 20;
+
+		if (TestAI[next]->health <= 0)
+		{
+			TestAI.RemoveAt(next);
+			SortEnemies();
+			FindClosest();
+			next = closest;
+			UE_LOG(LogTemp, Warning, TEXT("%d"), TestAI.Num());
+			bLockOn = false;
+		}
+		GetWorldTimerManager().SetTimer(attackHandle, this, &Amallow::DelayAttack, .75f, true);
+	}
+}
+
+void Amallow::DelayAttack()
+{
+	if (attackTime < 1)
+	{
+		attackTime++;
+	}
+	else
+	{
+		attackTime = 0;
+		GetWorldTimerManager().ClearTimer(attackHandle);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("%f"), attackTime);
 }
 
 FVector Amallow::CheckDirection(FString Axis)

@@ -1,5 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "GameFramework/Pawn.h"
@@ -27,5 +26,30 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = StaticMeshAssets, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* aiMesh;
-	
+
+	void moveAI();
+	void followMallow();
+
+	//Combat variables and functions
+	float health;
+	float damage;
+	float delayForAttack = 1.5f;
+	float lastTimeInRange;
+	float attackRange = 75.f;
+	bool firstTime = true;
+	bool bCanAttack;
+
+	void Attack();
+	void CheckRangeToChar();
+
+	//Targeting variables
+	float yPos = 300;
+	float inc = 1.0f;
+	float xPos;
+	float left;
+	bool bHitLimit = false;
+	bool bInAttackRange = false;
+	bool bInTargetRange = false;
+	float distToPlayer;
+	FRotator rotationFromChar;
 };

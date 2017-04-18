@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "MHUD.h"
 #include "UI_Controller.h"
+#include "AI.h"
 #include "mallow.generated.h"
 
 
@@ -107,7 +108,34 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "C++ Variables")
 	float dashState;
 
+	//Targeting functions and variables
 	void LockOnEnemy();
+	void LockRightEnemy();
+	void LockLeftEnemy();
+	void TargetEnemy();
+	void FindRight();
+	void FindLeft();
+	void SortEnemies();
+	void FindClosest();
+
+	TArray<AAI*> TestAI;
+	FVector AILocation;
+	float mousePitch;
+	float mouseYaw;
+	int next;
+	int highest;
+	bool bFirstLock = false;
+	int closest = 0;
+
+	//Combat variables and functions
+	float health;
+	float damage;
+	bool bAttackDelay = false;
+	float attackTime = 0;
+	FTimerHandle attackHandle;
+
+	void Attack();
+	void DelayAttack();
 
 	bool bMenuShow;
 	bool bInvShow;

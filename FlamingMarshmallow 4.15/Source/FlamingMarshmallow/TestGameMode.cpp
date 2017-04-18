@@ -78,8 +78,35 @@ void ATestGameMode::BeginPlay()
 	}
 	
 
+	//mainChar = GetWorld()->SpawnActor<Amallow>(Amallow::StaticClass());
+	//mainChar->SetActorRelativeLocation(FVector(-600, 0, 100));
 	
+	float i = 1;
 
+	while (enemies.Num() < 5)
+	{
+		SpawnAndAddAI(i);
+		i++;
+	}
+}
+
+void ATestGameMode::SpawnAndAddAI(float i)
+{
+	AAI* testAI = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
+	testAI->SetActorLocation(FVector(i*60.f, i*10.f, 50.f));
+	if (enemies.Num() % 2 == 0)
+	{
+		testAI->left *= -1;
+	}
+	enemies.Add(testAI);
+	mainChar->TestAI.Add(testAI);
+	UE_LOG(LogTemp, Warning, TEXT("%d"), enemies.Num());
+}
+
+// Called every frame
+void ATestGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }
 
 APawn* ATestGameMode::SpawnDefaultPawnFor()
