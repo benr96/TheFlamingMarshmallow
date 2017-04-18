@@ -128,7 +128,9 @@ public:
 	int closest = 0;
 
 	//Combat variables and functions
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C++ Variables")
 	float health;
+
 	float damage;
 	bool bAttackDelay = false;
 	float attackTime = 0;
