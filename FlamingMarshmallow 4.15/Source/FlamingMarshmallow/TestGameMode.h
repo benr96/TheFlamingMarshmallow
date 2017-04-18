@@ -6,6 +6,7 @@
 #include "ItemSpawnLoc.h"
 #include "mallow.h"
 #include "AI.h"
+#include "UI_Controller.h"
 #include "TestGameMode.generated.h"
 
 UCLASS()

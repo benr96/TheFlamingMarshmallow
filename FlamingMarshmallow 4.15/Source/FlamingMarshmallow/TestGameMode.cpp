@@ -77,7 +77,8 @@ void ATestGameMode::BeginPlay()
 		spawning->Initializer(&Cube);
 	}
 	
-
+	AUI_Controller* PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
+	mainChar = PC->mainChar;
 	//mainChar = GetWorld()->SpawnActor<Amallow>(Amallow::StaticClass());
 	//mainChar->SetActorRelativeLocation(FVector(-600, 0, 100));
 	

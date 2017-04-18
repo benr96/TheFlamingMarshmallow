@@ -212,8 +212,8 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &Amallow::ToggleInv);
 	PlayerInputComponent->BindAction("Pickup", IE_Pressed, this, &Amallow::Pickup);
 	PlayerInputComponent->BindAction("Pickup", IE_Released, this, &Amallow::StopPickup);
-	PlayerInputComponent->BindAction("LMouseClicked", IE_Pressed, this, &Amallow::LMouseClicked).bExecuteWhenPaused = true;
-	PlayerInputComponent->BindAction("LMouseClicked", IE_Released, this, &Amallow::LMouseReleased).bExecuteWhenPaused = true;
+	//PlayerInputComponent->BindAction("LMouseClicked", IE_Pressed, this, &Amallow::LMouseClicked).bExecuteWhenPaused = true;
+	PlayerInputComponent->BindAction("Attack", IE_Released, this, &Amallow::LMouseReleased).bExecuteWhenPaused = true;
 
 	
 	//turning and camera control
@@ -624,6 +624,7 @@ void Amallow::CameraYaw(float fAmount)
 
 void Amallow::Attack()
 {
+	HUD->bLMouseClicked = true;
 	if (bLockOn == true && TestAI[next]->bInAttackRange == true && attackTime == 0 && !GetWorldTimerManager().IsTimerActive(attackHandle))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
