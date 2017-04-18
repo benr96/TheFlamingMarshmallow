@@ -1,5 +1,4 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-//TODO put limit on distance of AI from character for targeting
 //TODO allow some Yaw movement (make smoother)
 //TODO sort array everytime enemy is added/deleted
 //TODO Fix bug when looking form behind while targeting
@@ -16,6 +15,7 @@ Amallow::Amallow()
 {
 	next = 0;
 	highest = 0;
+
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -157,10 +157,14 @@ void Amallow::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	movementControl();
-
+	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("%f"), health));
 	if (bLockOn)
 	{
 		TargetEnemy();
+	}
+	if (health <= 0)
+	{
+		Destroy();
 	}
 }
 
@@ -451,8 +455,6 @@ void Amallow::LockLeftEnemy()
 
 void Amallow::TargetEnemy()
 {
-	CheckRange();
-
 	if (bFirstLock)
 	{
 		FindClosest();
@@ -460,20 +462,25 @@ void Amallow::TargetEnemy()
 		bFirstLock = false;
 	}
 
-	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
-	rotation.Pitch = mousePitch;
-	rotation.Yaw += 10 * mouseYaw;
-	Controller->SetControlRotation(rotation); 
-	if (GEngine)
+	if (TestAI[next]->bInTargetRange)
 	{
-		//Print debug message
-		GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation00: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
+
+		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
+		rotation.Pitch = mousePitch;
+		rotation.Yaw += 10 * mouseYaw;
+		Controller->SetControlRotation(rotation); 
+	}
+	else
+	{
+		//bLockOn = false;
+		GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("No targets in range.")));
 	}
 }
+
 void Amallow::FindClosest()
 {
 	closest = 0;
-	for (int i = 1; i < TestAI.Num(); i++)
+	for (int i = 0; i < TestAI.Num(); i++)
 	{
 		if (TestAI[closest]->distToPlayer > TestAI[i]->distToPlayer)
 		{
@@ -494,22 +501,9 @@ void Amallow::FindRight()
 void Amallow::FindLeft()
 {
 	SortEnemies();
-	if (next >= 1)
+	if (next > 0)
 	{
 		next--;
-	}
-}
-
-void Amallow::CheckRange()
-{
-	for (int i = 0; i < TestAI.Num(); i++)
-	{
-		if ((TestAI[i]->distToPlayer = GetDistanceTo(TestAI[i])) <= 100.0f)
-		{
-			TestAI[i]->bInRange = true;
-		}
-
-		TestAI[i]->rotationFromChar = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[i]->GetActorLocation());
 	}
 }
 
@@ -563,7 +557,7 @@ void Amallow::CameraYaw(float fAmount)
 
 void Amallow::Attack()
 {
-	if (bLockOn == true && TestAI[next]->bInRange == true && attackTime == 0 && !GetWorldTimerManager().IsTimerActive(attackHandle))
+	if (bLockOn == true && TestAI[next]->bInAttackRange == true && attackTime == 0 && !GetWorldTimerManager().IsTimerActive(attackHandle))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
 		TestAI[next]->health -= 20;

@@ -2,6 +2,11 @@
 
 #include "FlamingMarshmallow.h"
 #include "AI.h"
+#include "mallow.h"
+#include "TestGameMode.h"
+#include "Kismet/KismetMathLibrary.h"
+
+Amallow* mallow;
 
 // Sets default values
 AAI::AAI()
@@ -33,18 +38,38 @@ AAI::AAI()
 void AAI::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	mallow = (Amallow*)(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
 // Called every frame
 void AAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	FString AIname = GetName();
 	moveAI();
-	//health -= .5f;
+	CheckRangeToChar();
+
 	if (health <= 0)
 	{
 		Destroy();
+	}
+	if (!mallow->IsPendingKill())
+	{
+		if (bInAttackRange)
+		{
+			if (firstTime)
+			{
+				lastTimeInRange = GetWorld()->GetTimeSeconds();
+				firstTime = false;
+			}
+
+			if (GetWorld()->GetTimeSeconds() - lastTimeInRange >= delayForAttack)
+			{
+				mallow->health -= 20;
+				UE_LOG(LogTemp, Warning, TEXT("Ouch! %s"), *AIname);
+				firstTime = true;
+			}
+		}
 	}
 }
 
@@ -82,5 +107,36 @@ void AAI::followMallow()
 
 void AAI::Attack()
 {
+	mallow->health -= 10;
+	UE_LOG(LogTemp, Warning, TEXT("Ouch!"));
 }
 
+void AAI::CheckRangeToChar()
+{
+	distToPlayer = GetDistanceTo(mallow);
+	if (distToPlayer <= 750)
+	{
+		bInTargetRange = true;
+		if (distToPlayer <= 100)
+		{
+			bInAttackRange = true;
+			if (distToPlayer <= attackRange)
+			{
+				bCanAttack = true;
+			}
+			else
+			{
+				bCanAttack = false;
+			}
+		}
+		else
+		{
+			bInAttackRange = false;
+		}
+	}
+	else
+	{
+		bInTargetRange = false;
+	}
+	rotationFromChar = UKismetMathLibrary::FindLookAtRotation(mallow->GetActorLocation(), this->GetActorLocation());
+}
