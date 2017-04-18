@@ -21,12 +21,9 @@ public:
 		TSubclassOf<class UUserWidget> wHUD;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		TSubclassOf<class UUserWidget> wMenu;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
-		TSubclassOf<class UUserWidget> wInv;
 
 	UUserWidget *HUD;
 	UUserWidget *Menu;
-	UUserWidget *Inv;
 
 	UFUNCTION(BlueprintCallable, Category = "C++ Functions")
 		void Settings();

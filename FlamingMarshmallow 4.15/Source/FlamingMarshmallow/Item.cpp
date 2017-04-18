@@ -67,22 +67,25 @@ AItem::AItem()
 }
 
 //used when recreating an item from a saved struct
-void AItem::Initializer(FString name, UStaticMesh *Mesh, UTexture *InvImage, FVector scale, FVector offset)
+void AItem::Initializer(FCoreItemData *Spawner)
 {
 	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
 
 	mainChar = PC->mainChar;
 
-	ItemName = name;
-	this->Mesh->SetStaticMesh(Mesh);
-	this->InvImage = InvImage;
+	ItemName = Spawner->Name;
+	this->Mesh->SetStaticMesh(Spawner->Mesh);
+	this->InvImage = Spawner->InvImage;
 	RespawnTimer = 0;
 
-	FVector Location = mainChar->GetCharacterMovement()->GetActorFeetLocation();
-	SetActorLocation(Location);
+	SetActorLocation(Spawner->Location);
 
-	this->Mesh->SetWorldScale3D(scale);
-	this->Mesh->SetRelativeLocation(offset);
+	this->Mesh->SetWorldScale3D(Spawner->scale);
+	this->Mesh->SetRelativeLocation(Spawner->offset);
+
+	bItemIsWithinRange = false;
+	mainChar->HUD->bPickupPrompt = false;
+	Text->SetVisibility(false);
 
 }
 
@@ -126,7 +129,7 @@ void AItem::TriggerEnter(class UPrimitiveComponent* HitComp, class AActor* Other
 	{
 		bItemIsWithinRange = true;
 		mainChar->HUD->bPickupPrompt = true;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
 	}
 }
 
@@ -136,7 +139,7 @@ void AItem::TriggerExit(class UPrimitiveComponent* HitComp, class AActor* OtherA
 	{
 		bItemIsWithinRange = false;
 		mainChar->HUD->bPickupPrompt = false;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
 	}
 }
 
@@ -145,7 +148,7 @@ void AItem::TriggerEnter1(class UPrimitiveComponent* HitComp, class AActor* Othe
 	if (bHidden == false)
 	{
 		Text->SetVisibility(true);
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
 	}
 }
 
@@ -154,7 +157,7 @@ void AItem::TriggerExit1(class UPrimitiveComponent* HitComp, class AActor* Other
 	if (bHidden == false)
 	{
 		Text->SetVisibility(false);
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
 
 	}
 }

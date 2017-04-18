@@ -2,6 +2,7 @@
 
 #pragma once
 #include "GameFramework/Actor.h"
+#include "MHUD.h"
 #include "Item.generated.h"
 
 UCLASS()
@@ -53,7 +54,7 @@ public:
 		void TriggerExit1(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	AItem();
-	void Initializer(FString name, UStaticMesh *Mesh, UTexture *InvImage, FVector scale, FVector offset);
+	void Initializer(FCoreItemData *Spawner);
 
 	void drawText();
 

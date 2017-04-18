@@ -552,7 +552,6 @@ void Amallow::ToggleInv()
 	{
 		bInvShow = true;
 		HUD->bDrawInv = true;
-		//PC->Inv->SetVisibility(ESlateVisibility::Visible);
 		Pause();
 	}
 	else

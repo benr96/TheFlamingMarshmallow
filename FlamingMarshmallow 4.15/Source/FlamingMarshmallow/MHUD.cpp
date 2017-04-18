@@ -1,9 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#pragma once
 #include "FlamingMarshmallow.h"
 #include "MHUD.h"
 #include "UI_Controller.h"
 #include "Item.h"
+#include "mallow.h"
 
 /*
 	KNOWN BUGS: 
@@ -12,9 +14,9 @@
 	it causes a limit to turning
 */
 
+
 void AMHUD::BeginPlay()
 {
-
 	initializer.Name = "";
 	initializer.InvImage = NULL;
 	initializer.Mesh = NULL;
@@ -83,6 +85,8 @@ void AMHUD::BeginPlay()
 
 	used = 0;
 	capacity = Slots.Num();
+
+
 }
 
 void AMHUD::DrawHUD()
@@ -212,8 +216,13 @@ void AMHUD::CheckHitboxes()
 void AMHUD::dropItem()
 {
 	AItem *dropped = GetWorld()->SpawnActor<AItem>(AItem::StaticClass());
+	Amallow *mainChar;
 
-	dropped->Initializer(selected.Name, selected.Mesh, selected.InvImage, selected.scale, selected.offset);
+	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
+	mainChar = PC->mainChar;
+	selected.Location = mainChar->GetCharacterMovement()->GetActorFeetLocation();
+
+	dropped->Initializer(&selected);
 	Slots[selectedIndex].Active = false;
 	selected.Active = false;
 	selectedIndex = -1;

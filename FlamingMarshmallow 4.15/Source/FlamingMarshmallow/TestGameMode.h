@@ -3,11 +3,9 @@
 #pragma once
 #include "GameFramework/GameModeBase.h"
 #include "Item.h"
+#include "ItemSpawnLoc.h"
 #include "TestGameMode.generated.h"
 
-/**
- *
- */
 UCLASS()
 class FLAMINGMARSHMALLOW_API ATestGameMode : public AGameModeBase
 {
@@ -15,4 +13,10 @@ class FLAMINGMARSHMALLOW_API ATestGameMode : public AGameModeBase
 	ATestGameMode();
 	void BeginPlay();
 	APawn* SpawnDefaultPawnFor();
+
+	TArray<AActor*> ItemSpawnLocations;
+
+	FCoreItemData Cone;
+	FCoreItemData Cube;
+	FCoreItemData Sphere;
 };

@@ -31,16 +31,7 @@ void AUI_Controller::BeginPlay()
 		}
 	}
 
-	if (wInv)
-	{
-		Inv = CreateWidget<UUserWidget>(this, wInv);
 
-		if (Inv)
-		{
-			Inv->AddToViewport();
-			Inv->SetVisibility(ESlateVisibility::Hidden);
-		}
-	}
 	GetWorldTimerManager().SetTimer(dashRegenTimer, this, &AUI_Controller::dashRegen, 0.01f, true);
 
 }
@@ -69,7 +60,6 @@ void AUI_Controller::Resume()
 	bShowMouseCursor = false;
 	HUD->SetVisibility(ESlateVisibility::Visible);
 	Menu->SetVisibility(ESlateVisibility::Hidden);
-	Inv->SetVisibility(ESlateVisibility::Hidden);
 	SetPause(false);
 
 }

@@ -17,6 +17,7 @@ struct FCoreItemData
 	bool Active;
 	FVector scale;
 	FVector offset;
+	FVector Location;
 };
 
 UCLASS()
