@@ -223,18 +223,41 @@ void AMHUD::dropItem()
 	selected.Location = mainChar->GetCharacterMovement()->GetActorFeetLocation();
 
 	dropped->Initializer(&selected);
+
+	//remove from inv
 	Slots[selectedIndex].Active = false;
 	selected.Active = false;
 	selectedIndex = -1;
-
 	used--;
 }
 
 void AMHUD::useItem()
 {
-	//what to do when item is used
-	//delete from inv
-	//apply changes to char or whatever, health, speed whatever.
+	Amallow *mainChar;
+
+	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
+	mainChar = PC->mainChar;
+
+	//if item is edible apply changes
+	if (selected.bEdible == true)
+	{
+		FString msg = "+" + FString::SanitizeFloat(selected.regen) + "Health";
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+
+		mainChar->health += selected.regen;
+
+		if (mainChar->health > 100)
+		{
+			mainChar->health = 100;
+		}
+
+		Slots[selectedIndex].Active = false;
+		selected.Active = false;
+		selectedIndex = -1;
+		used--;
+
+
+	}
 }
 
 void AMHUD::drawPickupPrompt()

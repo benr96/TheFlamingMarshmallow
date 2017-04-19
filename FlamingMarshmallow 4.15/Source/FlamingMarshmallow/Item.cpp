@@ -69,17 +69,19 @@ AItem::AItem()
 //used when recreating an item from a saved struct
 void AItem::Initializer(FCoreItemData *Spawner)
 {
+	//get ref to mallow through the player controller
 	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
-
 	mainChar = PC->mainChar;
 
-	ItemName = Spawner->Name;
-	this->Mesh->SetStaticMesh(Spawner->Mesh);
-	this->InvImage = Spawner->InvImage;
-	RespawnTimer = 0;
+	//set things according to struct passed in
+	ItemName = Spawner->Name;//NAME
+	this->Mesh->SetStaticMesh(Spawner->Mesh);//STATIC MESH
+	this->InvImage = Spawner->InvImage;//IMAGE FOR INVENTORY
+	RespawnTimer = Spawner->respawnTime;//RESPAWN TIME
+	HPRegen = Spawner->regen;//HEALTH REGEN AMOUNT
+	bEdible = Spawner->bEdible;//IF EDIBLE
 
 	SetActorLocation(Spawner->Location);
-
 	this->Mesh->SetWorldScale3D(Spawner->scale);
 	this->Mesh->SetRelativeLocation(Spawner->offset);
 
@@ -129,7 +131,7 @@ void AItem::TriggerEnter(class UPrimitiveComponent* HitComp, class AActor* Other
 	{
 		bItemIsWithinRange = true;
 		mainChar->HUD->bPickupPrompt = true;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
 	}
 }
 
@@ -139,7 +141,7 @@ void AItem::TriggerExit(class UPrimitiveComponent* HitComp, class AActor* OtherA
 	{
 		bItemIsWithinRange = false;
 		mainChar->HUD->bPickupPrompt = false;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
 	}
 }
 
@@ -148,7 +150,7 @@ void AItem::TriggerEnter1(class UPrimitiveComponent* HitComp, class AActor* Othe
 	if (bHidden == false)
 	{
 		Text->SetVisibility(true);
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
 	}
 }
 
@@ -157,7 +159,7 @@ void AItem::TriggerExit1(class UPrimitiveComponent* HitComp, class AActor* Other
 	if (bHidden == false)
 	{
 		Text->SetVisibility(false);
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
 
 	}
 }
@@ -177,6 +179,10 @@ void AItem::Pickup()
 			mainChar->HUD->Slots[i].Active = true;
 			mainChar->HUD->Slots[i].scale = scale;
 			mainChar->HUD->Slots[i].offset = Mesh->RelativeLocation;
+			mainChar->HUD->Slots[i].regen = HPRegen;
+			mainChar->HUD->Slots[i].bEdible = bEdible;
+			mainChar->HUD->Slots[i].respawnTime = RespawnTimer;
+			
 			break;
 		}
 	}

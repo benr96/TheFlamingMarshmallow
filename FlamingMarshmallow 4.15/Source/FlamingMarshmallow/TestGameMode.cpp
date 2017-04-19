@@ -28,6 +28,9 @@ ATestGameMode::ATestGameMode()
 		Cone.scale = FVector(0.2, 0.2, 0.2);
 		Cone.offset = FVector(0, 0, 0);
 		Cone.Location = FVector(0, 0, 0);
+		Cone.respawnTime = 10;
+		Cone.regen = 20;
+		Cone.bEdible = true;
 
 		Cube.Name = "Cube";
 		Cube.Mesh = CubeAsset.Object;
@@ -35,6 +38,9 @@ ATestGameMode::ATestGameMode()
 		Cube.scale = FVector(0.2, 0.2, 0.2);
 		Cube.offset = FVector(0, 0, 0);
 		Cube.Location = FVector(0, 0, 0);
+		Cube.respawnTime = 20;
+		Cube.regen = 0;
+		Cube.bEdible = false;
 
 		Sphere.Name = "Sphere";
 		Sphere.Mesh = SphereAsset.Object;
@@ -42,6 +48,9 @@ ATestGameMode::ATestGameMode()
 		Sphere.scale = FVector(0.2, 0.2, 0.2);
 		Sphere.offset = FVector(0, 0, 0);
 		Sphere.Location = FVector(0, 0, 0);
+		Sphere.respawnTime = 5;
+		Sphere.regen = 40;
+		Sphere.bEdible = true;
 
 		ItemTemplates.Add(Cone);
 		ItemTemplates.Add(Cube);

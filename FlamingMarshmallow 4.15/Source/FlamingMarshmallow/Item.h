@@ -11,9 +11,6 @@ class FLAMINGMARSHMALLOW_API AItem : public AActor
 	GENERATED_BODY()
 	
 public:	
-
-	
-
 	bool bEdible = false;
 	bool bHidden = false;
 	bool bItemIsWithinRange = false;
