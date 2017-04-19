@@ -7,10 +7,7 @@
 #include "MHUD.h"
 #include "mallow.h"
 #include "Blueprint/UserWidget.h"
-
 #include "Kismet/KismetMathLibrary.h"
-#include <vector>
-#include <algorithm>
 
 // Sets default values
 

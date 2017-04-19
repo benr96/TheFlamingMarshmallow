@@ -14,10 +14,14 @@ struct FCoreItemData
 	FString Name;
 	UStaticMesh *Mesh;
 	UTexture *InvImage;
-	bool Active;
 	FVector scale;
 	FVector offset;
 	FVector Location;
+	float respawnTime;
+	bool bEdible;
+	float regen;
+	bool Active;
+
 };
 
 UCLASS()

@@ -5,13 +5,13 @@
 #include "ShrineSP.h"
 #include "AI.h"
 #include "EngineUtils.h"
-#include "MHUD.h"
 #include "TestGameMode.h"
 
 ATestGameMode::ATestGameMode()
 {
 		HUDClass = AMHUD::StaticClass();
 
+		//loading in assets for item spawning
 		static ConstructorHelpers::FObjectFinder<UTexture> ConeImage(TEXT("/Game/WorldV3/Textures/Cone"));
 		static ConstructorHelpers::FObjectFinder<UTexture> CubeImage(TEXT("/Game/WorldV3/Textures/Cube"));
 		static ConstructorHelpers::FObjectFinder<UTexture> SphereImage(TEXT("/Game/WorldV3/Textures/sphere"));
@@ -20,7 +20,8 @@ ATestGameMode::ATestGameMode()
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereAsset(TEXT("/Game/StarterContent/Shapes/Shape_Sphere"));
 
-
+		//setting up the structs used to make each item from, so all you need to make an item is fill out one of these structs
+		//spawn the item class and pass the struct in to its initializer class
 		Cone.Name = "Cone";
 		Cone.Mesh = ConeAsset.Object;
 		Cone.InvImage = ConeImage.Object;
@@ -41,46 +42,18 @@ ATestGameMode::ATestGameMode()
 		Sphere.scale = FVector(0.2, 0.2, 0.2);
 		Sphere.offset = FVector(0, 0, 0);
 		Sphere.Location = FVector(0, 0, 0);
+
+		ItemTemplates.Add(Cone);
+		ItemTemplates.Add(Cube);
+		ItemTemplates.Add(Sphere);
 }
 
 void ATestGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for (TObjectIterator<ACharacter> Itr; Itr; ++Itr)
-	{
-		// Access the subclass instance with the * or -> operators.
-		FString name = Itr->GetName();
-
-		if (name == "Main")
-		{
-			Itr->AutoPossessPlayer = EAutoReceiveInput::Player0;
-			Itr->AutoReceiveInput = EAutoReceiveInput::Player0;
-		}
-	}
-
-
-
-	TSubclassOf<AItemSpawnLoc> ClassToFind = AItemSpawnLoc::StaticClass();
-
-
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ClassToFind, ItemSpawnLocations);
-
-	for (int i = 0; i < ItemSpawnLocations.Num(); i++)
-	{
-		AItemSpawnLoc *loc = (AItemSpawnLoc*)ItemSpawnLocations[i];
-		FVector location = loc->location;
-
-		Cube.Location = ItemSpawnLocations[i]->GetActorLocation();
-
-		AItem *spawning = GetWorld()->SpawnActor<AItem>(AItem::StaticClass());
-		spawning->Initializer(&Cube);
-	}
-	
-	AUI_Controller* PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
-	mainChar = PC->mainChar;
-	//mainChar = GetWorld()->SpawnActor<Amallow>(Amallow::StaticClass());
-	//mainChar->SetActorRelativeLocation(FVector(-600, 0, 100));
+	GetMallow();
+	GetItemSpawnLocations();
 	
 	float i = 1;
 
@@ -113,4 +86,38 @@ void ATestGameMode::Tick(float DeltaTime)
 APawn* ATestGameMode::SpawnDefaultPawnFor()
 {
 	return NULL;
+}
+
+void ATestGameMode::GetMallow()
+{
+	//getting mallow main character
+	TSubclassOf<Amallow> mallow = Amallow::StaticClass();
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), mallow, mallows);
+
+	mainChar = (Amallow*)mallows[0];
+	mainChar->AutoPossessPlayer = EAutoReceiveInput::Player0;
+	mainChar->AutoReceiveInput = EAutoReceiveInput::Player0;
+}
+
+void ATestGameMode::GetItemSpawnLocations()
+{
+	//getting spawn locations for items
+	TSubclassOf<AItemSpawnLoc> ItemSpawnLoc = AItemSpawnLoc::StaticClass();
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ItemSpawnLoc, ItemSpawnLocations);
+
+	for (int i = 0; i < ItemSpawnLocations.Num(); i++)
+	{
+		//random loot spawning
+		float rand = FMath::RandRange(0,ItemTemplates.Num()-1);
+		
+		AItemSpawnLoc *loc = (AItemSpawnLoc*)ItemSpawnLocations[i];
+		FVector location = loc->location;
+
+		ItemTemplates[rand].Location = ItemSpawnLocations[i]->GetActorLocation();
+
+		AItem *spawning = GetWorld()->SpawnActor<AItem>(AItem::StaticClass());
+		spawning->Initializer(&ItemTemplates[rand]);
+	}
 }

@@ -7,6 +7,7 @@
 #include "mallow.h"
 #include "AI.h"
 #include "UI_Controller.h"
+#include "MHUD.h"
 #include "TestGameMode.generated.h"
 
 UCLASS()
@@ -23,8 +24,12 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	APawn* SpawnDefaultPawnFor();
+	void GetMallow();
+	void GetItemSpawnLocations();
 
 	TArray<AActor*> ItemSpawnLocations;
+	TArray<AActor*> mallows;
+	TArray<FCoreItemData> ItemTemplates;
 
 	FCoreItemData Cone;
 	FCoreItemData Cube;
