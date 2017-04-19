@@ -131,7 +131,7 @@ void AItem::TriggerEnter(class UPrimitiveComponent* HitComp, class AActor* Other
 	{
 		bItemIsWithinRange = true;
 		mainChar->HUD->bPickupPrompt = true;
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
+		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
 	}
 }
 
@@ -141,7 +141,7 @@ void AItem::TriggerExit(class UPrimitiveComponent* HitComp, class AActor* OtherA
 	{
 		bItemIsWithinRange = false;
 		mainChar->HUD->bPickupPrompt = false;
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
+		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
 	}
 }
 
@@ -150,7 +150,7 @@ void AItem::TriggerEnter1(class UPrimitiveComponent* HitComp, class AActor* Othe
 	if (bHidden == false)
 	{
 		Text->SetVisibility(true);
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
+		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
 	}
 }
 
@@ -159,7 +159,7 @@ void AItem::TriggerExit1(class UPrimitiveComponent* HitComp, class AActor* Other
 	if (bHidden == false)
 	{
 		Text->SetVisibility(false);
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
+		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
 
 	}
 }
