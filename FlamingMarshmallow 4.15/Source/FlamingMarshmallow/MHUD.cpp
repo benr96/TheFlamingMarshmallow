@@ -132,7 +132,7 @@ void AMHUD::drawInv()
 
 			if (Slots[j].Active == true)
 			{
-				DrawTexture(Slots[j].InvImage, x, y, SlotWH, SlotWH, NULL, NULL, NULL, NULL);
+				DrawTexture(Slots[j].InvImage, x, y, SlotWH, SlotWH, 60, 60, 1, 1);
 			}
 			else
 			{
