@@ -106,18 +106,24 @@ void AMHUD::DrawHUD()
 
 void AMHUD::drawInv()
 {
+	float textWidth;
+	float textHeight;
+
 	//Inventory Box
 	DrawRect(FLinearColor(0.1, 0.1, 0.1, 0.75), InvX, InvY, InvWidth, InvHeight);
 
 	//Resume Button
 	DrawRect(FLinearColor(0.01, 0.01, 0.01, 0.75), resumeX, resumeY, SlotWH * 2, SlotWH);
-	DrawText("Resume", FLinearColor(1, 1, 1), resumeX, resumeY);
 
-	DrawText("INVENTORY", FLinearColor(1, 1, 1), InvX, InvY);
+	GetTextSize("Resume", textWidth, textHeight,0,1.25);
+	DrawText("Resume", FLinearColor(1, 1, 1), resumeX + SlotWH - textWidth/2 , resumeY+SlotWH/2 - textHeight/2,0,1.25);
+
+	GetTextSize("INVENTORY", textWidth, textHeight, 0, 1.25);
+	DrawText("INVENTORY", FLinearColor(1, 1, 1), InvX+InvWidth/2 - textWidth/2, InvY+textHeight,0,1.25);
 
 	FString cap = FString::FromInt(used) + "/" + FString::FromInt(capacity);
 
-	DrawText(cap, FLinearColor(1, 1, 1), resumeX+SlotWH * 3, resumeY);
+	DrawText(cap, FLinearColor(1, 1, 1), resumeX+SlotWH * 3, resumeY,0,1.25);
 
 	for (int row = 0; row < rows; row++)
 	{
@@ -155,16 +161,20 @@ void AMHUD::drawInv()
 	//if an item is selected
 	if (selected.Active == true)
 	{
+		GetTextSize(selected.Name, textWidth, textHeight, 0, 1.25);
+
 		DrawRect(FLinearColor(0.1, 0.1, 0.1, 0.75), selectedBoxX, selectedBoxY, selectedBoxWidth, selectedBoxHeight);
-		DrawText(selected.Name, FLinearColor(1, 1, 1), selectedBoxX, selectedBoxY);
+		DrawText(selected.Name, FLinearColor(1, 1, 1), selectedBoxX + selectedBoxWidth/2 - textWidth/2, selectedBoxY+textHeight,0,1.25);
 
 		//Drop Button
+		GetTextSize("Drop", textWidth, textHeight, 0, 1.25);
 		DrawRect(FLinearColor(0.01, 0.01, 0.01, 0.75), dropX, dropY, dropWidth, dropHeight);
-		DrawText("Drop", FLinearColor(1, 1, 1), dropX, dropY);
+		DrawText("Drop", FLinearColor(1, 1, 1), dropX + dropWidth/2 - textWidth/2, dropY + dropHeight/2 - textHeight/2,0,1.25);
 
 		//Use Button
+		GetTextSize("Use", textWidth, textHeight, 0, 1.25);
 		DrawRect(FLinearColor(0.01, 0.01, 0.01, 0.75), useX, useY, useWidth, useHeight);
-		DrawText("Use", FLinearColor(1, 1, 1), useX, useY);
+		DrawText("Use", FLinearColor(1, 1, 1), useX + useWidth/2 - textWidth/2, useY + useHeight/2 - textHeight/2,0,1.25);
 	}
 
 }
@@ -215,13 +225,15 @@ void AMHUD::CheckHitboxes()
 
 void AMHUD::dropItem()
 {
-	AItem *dropped = GetWorld()->SpawnActor<AItem>(AItem::StaticClass());
-	Amallow *mainChar;
-
+	//get reference to player via player controller
 	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
-	mainChar = PC->mainChar;
-	selected.Location = mainChar->GetCharacterMovement()->GetActorFeetLocation();
+	Amallow *mainChar = PC->mainChar;
 
+	//set items struct location to be directly below the player
+	selected.Location = FVector(mainChar->FloorLoc.X+50, mainChar->FloorLoc.Y, mainChar->FloorLoc.Z);
+
+	//spawn and initialze the item
+	AItem *dropped = GetWorld()->SpawnActor<AItem>(AItem::StaticClass());
 	dropped->Initializer(&selected);
 
 	//remove from inv
@@ -255,8 +267,6 @@ void AMHUD::useItem()
 		selected.Active = false;
 		selectedIndex = -1;
 		used--;
-
-
 	}
 }
 

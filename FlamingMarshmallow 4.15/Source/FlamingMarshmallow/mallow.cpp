@@ -21,6 +21,7 @@ Amallow::Amallow()
 
 	//size of capsule
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 35.0f);
+	RootComponent = GetCapsuleComponent();
 
 	//creating static mesh
 	MallowVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MallowVisual"));
@@ -173,6 +174,16 @@ void Amallow::Tick( float DeltaTime )
 	{
 		Destroy();
 	}
+
+	FHitResult result;
+
+	FVector start = GetCharacterMovement()->GetActorFeetLocation();
+	FVector end = FVector(start.X, start.Y, start.Z - 5000);
+
+	GetWorld()->LineTraceSingleByChannel(result, start, end, ECollisionChannel::ECC_Visibility);
+
+	FloorLoc = result.Location;
+
 }
 
 // Called to bind functionality to input
@@ -206,7 +217,7 @@ void Amallow::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("MoveLeft", IE_Released, this, &Amallow::StopLeft);
 
 	PlayerInputComponent->BindAction("Menu", IE_Pressed, this, &Amallow::ToggleMenu);
-	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &Amallow::ToggleInv);
+	PlayerInputComponent->BindAction("Inventory", IE_Pressed, this, &Amallow::ToggleInv).bExecuteWhenPaused = true;
 	PlayerInputComponent->BindAction("Pickup", IE_Pressed, this, &Amallow::Pickup);
 	PlayerInputComponent->BindAction("Pickup", IE_Released, this, &Amallow::StopPickup);
 	
@@ -714,8 +725,7 @@ void Amallow::ToggleInv()
 	}
 	else
 	{
-		bInvShow = false;
-		HUD->bDrawInv = false;
+		PC->Resume();
 	}
 }
 

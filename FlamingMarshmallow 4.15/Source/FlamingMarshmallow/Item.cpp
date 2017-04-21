@@ -27,6 +27,7 @@ Amallow *mainChar;
 // Sets default values
 AItem::AItem()
 {
+	SetActorLocation(FVector(0, 0, -5000));
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -40,7 +41,6 @@ AItem::AItem()
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AItem::TriggerEnter);
 	Sphere->OnComponentEndOverlap.AddDynamic(this, &AItem::TriggerExit);
 	RootComponent = Sphere;
-
 
 
 	//Sphere for label
@@ -121,6 +121,7 @@ void AItem::Tick(float DeltaTime)
 		{
 			Pickup();
 			mainChar->bPickup = false;
+			bItemIsWithinRange = false;
 		}
 	}
 }

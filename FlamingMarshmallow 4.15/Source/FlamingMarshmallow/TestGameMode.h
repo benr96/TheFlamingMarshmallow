@@ -26,10 +26,12 @@ public:
 	APawn* SpawnDefaultPawnFor();
 	void GetMallow();
 	void GetItemSpawnLocations();
+	void cleanItemSettings();
 
-	TArray<AActor*> ItemSpawnLocations;
+	TArray<AActor*> ItemSpawnLocations;//where items will be randomly spawned
 	TArray<AActor*> mallows;
-	TArray<FCoreItemData> ItemTemplates;
+	TArray<FCoreItemData> ItemTemplates;//where the structs that are used to spawn items will be kept
+	TArray<AItem*> Items;//actual item object spawned in the game
 
 	FCoreItemData Cone;
 	FCoreItemData Cube;
