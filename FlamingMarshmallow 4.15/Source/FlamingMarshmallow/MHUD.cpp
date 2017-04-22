@@ -231,6 +231,7 @@ void AMHUD::dropItem()
 
 	//set items struct location to be directly below the player
 	selected.Location = FVector(mainChar->FloorLoc.X+50, mainChar->FloorLoc.Y, mainChar->FloorLoc.Z);
+	selected.respawnTime = 0;
 
 	//spawn and initialze the item
 	AItem *dropped = GetWorld()->SpawnActor<AItem>(AItem::StaticClass());

@@ -173,6 +173,7 @@ void Amallow::Tick( float DeltaTime )
 	if (health <= 0)
 	{
 		Destroy();
+		bDeathMenu = true;
 	}
 
 	FHitResult result;
@@ -187,6 +188,18 @@ void Amallow::Tick( float DeltaTime )
 	if (PC->bMainMenu == true)
 	{
 		PC->MainMenu->SetVisibility(ESlateVisibility::Visible);
+		PC->Menu->SetVisibility(ESlateVisibility::Hidden);
+		PC->HUD->SetVisibility(ESlateVisibility::Hidden);
+		PC->DeathMenu->SetVisibility(ESlateVisibility::Hidden);
+		PC->bShowMouseCursor = true;
+		PC->SetPause(true);
+		bAcceptInput = false;
+	}
+
+	if (bDeathMenu == true)
+	{
+		PC->DeathMenu->SetVisibility(ESlateVisibility::Visible);
+		PC->MainMenu->SetVisibility(ESlateVisibility::Hidden);
 		PC->Menu->SetVisibility(ESlateVisibility::Hidden);
 		PC->HUD->SetVisibility(ESlateVisibility::Hidden);
 		PC->bShowMouseCursor = true;

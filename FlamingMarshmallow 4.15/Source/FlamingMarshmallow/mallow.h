@@ -152,6 +152,8 @@ public:
 	void LMouseClicked();
 	void LMouseReleased();
 
+	bool bDeathMenu = false;
+
 	TArray<FCoreItemData> Inventory;
 
 	AUI_Controller *PC;

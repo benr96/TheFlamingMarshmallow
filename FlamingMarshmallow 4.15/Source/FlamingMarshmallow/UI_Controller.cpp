@@ -42,10 +42,19 @@ void AUI_Controller::BeginPlay()
 			}
 	}
 
+	if (wDeathMenu)
+	{
+		DeathMenu = CreateWidget<UUserWidget>(this, wDeathMenu);
+
+		if (DeathMenu)
+		{
+			DeathMenu->AddToViewport();
+			DeathMenu->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+
 
 	GetWorldTimerManager().SetTimer(dashRegenTimer, this, &AUI_Controller::dashRegen, 0.01f, true);
-
-
 }
 
 void AUI_Controller::Tick(float DeltaSeconds)
@@ -79,7 +88,7 @@ void AUI_Controller::Resume()
 
 void AUI_Controller::Restart()
 {
-	
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 }
 
 void AUI_Controller::dashRegen()
