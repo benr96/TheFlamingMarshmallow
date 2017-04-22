@@ -11,7 +11,16 @@ class FLAMINGMARSHMALLOW_API AItem : public AActor
 	GENERATED_BODY()
 	
 public:	
-	bool bEdible = false;
+	//kinds of items
+	bool bFood = false;
+	bool bSpeed = false;
+	bool bDamage = false;
+
+	//amount to increase by
+	float Health = 0;
+	float Speed = 0;
+	float Damage = 0;
+
 	bool bHidden = false;
 	bool bItemIsWithinRange = false;
 	bool bPickupPrompt = false;
@@ -19,8 +28,6 @@ public:
 
 	FVector scale;
 	
-	float HPRegen = 0;
-
 	FTimerHandle RespawnTimerHandle; 
 	float  RespawnTimer = 10;//0 means no respawn, item will be destroyed in world
 	void Respawn();

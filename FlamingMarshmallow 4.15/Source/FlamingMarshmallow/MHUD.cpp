@@ -225,12 +225,16 @@ void AMHUD::CheckHitboxes()
 
 void AMHUD::dropItem()
 {
+	bool bValidDropLocation = false;
+	bool bCheck = true;
 	//get reference to player via player controller
 	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
 	Amallow *mainChar = PC->mainChar;
+	FVector location = FVector(mainChar->FloorLoc.X + 50, mainChar->FloorLoc.Y, mainChar->FloorLoc.Z);
+	
 
 	//set items struct location to be directly below the player
-	selected.Location = FVector(mainChar->FloorLoc.X+50, mainChar->FloorLoc.Y, mainChar->FloorLoc.Z);
+	selected.Location = location;
 	selected.respawnTime = 0;
 
 	//spawn and initialze the item
@@ -252,17 +256,43 @@ void AMHUD::useItem()
 	mainChar = PC->mainChar;
 
 	//if item is edible apply changes
-	if (selected.bEdible == true)
+	if (selected.bFood == true)
 	{
-		FString msg = "+" + FString::SanitizeFloat(selected.regen) + "Health";
+		FString msg = "+" + FString::SanitizeFloat(selected.Health) + "Health";
 		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
 
-		mainChar->health += selected.regen;
+		mainChar->health += selected.Health;
 
 		if (mainChar->health > 100)
 		{
 			mainChar->health = 100;
 		}
+
+		Slots[selectedIndex].Active = false;
+		selected.Active = false;
+		selectedIndex = -1;
+		used--;
+	}
+
+	if (selected.bSpeed == true)
+	{
+		FString msg = "+" + FString::SanitizeFloat(selected.Speed) + "Speed";
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+
+		//mainChar->speed += speed or *= or whatever
+
+		Slots[selectedIndex].Active = false;
+		selected.Active = false;
+		selectedIndex = -1;
+		used--;
+	}
+
+	if (selected.bDamage == true)
+	{
+		FString msg = "+" + FString::SanitizeFloat(selected.Damage) + "Damage";
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+
+		//mainChar->damage += damage or *= or whatever
 
 		Slots[selectedIndex].Active = false;
 		selected.Active = false;

@@ -40,8 +40,6 @@ public:
 
 	UTextRenderComponent* Speed;
 
-
-
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float TurnRate;
 	UPROPERTY(VisibleAnywhere, Category = Movement)

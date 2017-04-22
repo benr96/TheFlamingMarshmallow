@@ -70,8 +70,12 @@ void AItem::Initializer(FCoreItemData *Spawner)
 	this->Mesh->SetStaticMesh(Spawner->Mesh);//STATIC MESH
 	this->InvImage = Spawner->InvImage;//IMAGE FOR INVENTORY
 	RespawnTimer = Spawner->respawnTime;//RESPAWN TIME
-	HPRegen = Spawner->regen;//HEALTH REGEN AMOUNT
-	bEdible = Spawner->bEdible;//IF EDIBLE
+	Health = Spawner->Health;//HEALTH REGEN AMOUNT
+	Speed = Spawner->Speed;//SPEED REGEN AMOUNT
+	Damage = Spawner->Damage;//DAMAGE REGEN AMOUNT
+	bFood = Spawner->bFood;//IF HP INC
+	bSpeed = Spawner->bSpeed;//IF SPEED INC
+	bDamage = Spawner->bDamage;//IF DAMAGE INC
 
 	SetActorLocation(Spawner->Location);
 	this->Mesh->SetWorldScale3D(Spawner->scale);
@@ -185,8 +189,10 @@ void AItem::Pickup()
 			mainChar->HUD->Slots[i].Active = true;
 			mainChar->HUD->Slots[i].scale = scale;
 			mainChar->HUD->Slots[i].offset = Mesh->RelativeLocation;
-			mainChar->HUD->Slots[i].regen = HPRegen;
-			mainChar->HUD->Slots[i].bEdible = bEdible;
+			mainChar->HUD->Slots[i].Health = Health;
+			mainChar->HUD->Slots[i].bFood = bFood;
+			mainChar->HUD->Slots[i].bSpeed = bSpeed;
+			mainChar->HUD->Slots[i].bDamage = bDamage;
 			mainChar->HUD->Slots[i].respawnTime = RespawnTimer;
 			
 			break;

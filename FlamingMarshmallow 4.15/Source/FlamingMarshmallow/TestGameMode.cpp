@@ -20,6 +20,7 @@ ATestGameMode::ATestGameMode()
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
 		static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereAsset(TEXT("/Game/StarterContent/Shapes/Shape_Sphere"));
 
+
 		//setting up the structs used to make each item from, so all you need to make an item is fill out one of these structs
 		//spawn the item class and pass the struct in to its initializer class
 		Cone.Name = "Cone";
@@ -29,8 +30,8 @@ ATestGameMode::ATestGameMode()
 		Cone.offset = FVector(0, 0, 0);
 		Cone.Location = FVector(0, 0, 0);
 		Cone.respawnTime = 10;
-		Cone.regen = 20;
-		Cone.bEdible = true;
+		Cone.Health = 20;
+		Cone.bFood = true;
 
 		Cube.Name = "Cube";
 		Cube.Mesh = CubeAsset.Object;
@@ -39,8 +40,8 @@ ATestGameMode::ATestGameMode()
 		Cube.offset = FVector(0, 0, 0);
 		Cube.Location = FVector(0, 0, 0);
 		Cube.respawnTime = 20;
-		Cube.regen = 0;
-		Cube.bEdible = false;
+		Cube.Speed = 0;
+		Cube.bSpeed = true;
 
 		Sphere.Name = "Sphere";
 		Sphere.Mesh = SphereAsset.Object;
@@ -49,8 +50,8 @@ ATestGameMode::ATestGameMode()
 		Sphere.offset = FVector(0, 0, 0);
 		Sphere.Location = FVector(0, 0, 0);
 		Sphere.respawnTime = 5;
-		Sphere.regen = 40;
-		Sphere.bEdible = true;
+		Sphere.Damage = 0;
+		Sphere.bDamage = true;
 
 		ItemTemplates.Add(Cone);
 		ItemTemplates.Add(Cube);
@@ -62,7 +63,7 @@ void ATestGameMode::BeginPlay()
 	Super::BeginPlay();
 
 	GetMallow();
-	GetItemSpawnLocations();
+	SpawnItems();
 	
 	float i = 1;
 
@@ -90,6 +91,7 @@ void ATestGameMode::SpawnAndAddAI(float i)
 void ATestGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 APawn* ATestGameMode::SpawnDefaultPawnFor()
@@ -109,7 +111,7 @@ void ATestGameMode::GetMallow()
 	mainChar->AutoReceiveInput = EAutoReceiveInput::Player0;
 }
 
-void ATestGameMode::GetItemSpawnLocations()
+void ATestGameMode::SpawnItems()
 {
 	//getting spawn locations for items
 	TSubclassOf<AItemSpawnLoc> ItemSpawnLoc = AItemSpawnLoc::StaticClass();
@@ -120,9 +122,6 @@ void ATestGameMode::GetItemSpawnLocations()
 	{
 		//random loot spawning
 		float rand = FMath::RandRange(0, ItemTemplates.Num() - 1);
-
-		AItemSpawnLoc *loc = (AItemSpawnLoc*)ItemSpawnLocations[i];
-		FVector location = loc->location;
 
 		ItemTemplates[rand].Location = ItemSpawnLocations[i]->GetActorLocation();
 

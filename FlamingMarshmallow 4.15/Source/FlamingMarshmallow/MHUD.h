@@ -18,10 +18,13 @@ struct FCoreItemData
 	FVector offset;
 	FVector Location;
 	float respawnTime;
-	bool bEdible;
-	float regen;
+	bool bFood = false;
+	bool bSpeed = false;
+	bool bDamage = false;
+	float Health = 0;
+	float Speed = 0;
+	float Damage = 0;
 	bool Active;
-
 };
 
 UCLASS()

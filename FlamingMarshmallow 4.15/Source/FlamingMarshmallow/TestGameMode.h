@@ -25,12 +25,12 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	APawn* SpawnDefaultPawnFor();
 	void GetMallow();
-	void GetItemSpawnLocations();
+	void SpawnItems();
 
 	TArray<AActor*> ItemSpawnLocations;//where items will be randomly spawned
 	TArray<AActor*> mallows;
 	TArray<FCoreItemData> ItemTemplates;//where the structs that are used to spawn items will be kept
-	TArray<AItem*> Items;//actual item object spawned in the game
+	TArray<AItem*> Items;
 
 	FCoreItemData Cone;
 	FCoreItemData Cube;
