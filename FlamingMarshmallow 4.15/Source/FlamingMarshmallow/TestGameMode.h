@@ -26,7 +26,6 @@ public:
 	APawn* SpawnDefaultPawnFor();
 	void GetMallow();
 	void GetItemSpawnLocations();
-	void cleanItemSettings();
 
 	TArray<AActor*> ItemSpawnLocations;//where items will be randomly spawned
 	TArray<AActor*> mallows;

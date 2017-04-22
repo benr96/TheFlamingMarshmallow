@@ -90,7 +90,6 @@ void ATestGameMode::SpawnAndAddAI(float i)
 void ATestGameMode::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	cleanItemSettings();
 }
 
 APawn* ATestGameMode::SpawnDefaultPawnFor()
@@ -131,19 +130,5 @@ void ATestGameMode::GetItemSpawnLocations()
 		spawning->Initializer(&ItemTemplates[rand]);
 
 		Items.Add(spawning);
-	}
-
-	cleanItemSettings();
-}
-
-//trying to fix the weird overlap triggering when there is no overlap bug, still not working
-void ATestGameMode::cleanItemSettings()
-{
-	for (int i = 0; i < Items.Num();i++)
-	{
-		Items[i]->bItemIsWithinRange = false;
-		Items[i]->bPickupPrompt = false;
-		mainChar->HUD->bPickupPrompt = false;
-		Items[i]->Text->SetVisibility(false);
 	}
 }

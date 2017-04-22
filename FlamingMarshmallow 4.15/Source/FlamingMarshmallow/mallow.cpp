@@ -183,7 +183,17 @@ void Amallow::Tick( float DeltaTime )
 	GetWorld()->LineTraceSingleByChannel(result, start, end, ECollisionChannel::ECC_Visibility);
 
 	FloorLoc = result.Location;
-
+	
+	if (PC->bMainMenu == true)
+	{
+		PC->MainMenu->SetVisibility(ESlateVisibility::Visible);
+		PC->Menu->SetVisibility(ESlateVisibility::Hidden);
+		PC->HUD->SetVisibility(ESlateVisibility::Hidden);
+		PC->bShowMouseCursor = true;
+		PC->SetPause(true);
+		bAcceptInput = false;
+	}
+	
 }
 
 // Called to bind functionality to input
