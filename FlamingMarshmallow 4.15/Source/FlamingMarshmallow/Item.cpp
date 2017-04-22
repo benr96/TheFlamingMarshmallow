@@ -8,18 +8,10 @@
 Amallow *mainChar;
 /*
 	KNOWN BUGs: 
-	
-	1.when item is respawned trigger enter and trigger enter 1 are both called, the trigger exits are not called.
-	this happnes when you are not in the tigger area. due to exit not being called you can pick up the item from a distance.
-	This is related to setting actor collision to false when pickup is called, and then true when respawned. Without this change
-	it does not happen, however then there is the problem of having an invisible obstacle.
-	
-	**Possibly to do with the items being close together actually, triggering each other functions
-
-	2. When items are dropped on top of each other the text is drawn over each other being unreadable, condsider making it just say
+	1. When items are dropped on top of each other the text is drawn over each other being unreadable, condsider making it just say
 	how many items there are
 	
-	3. When items are dropped on top of each other pressing e only pickups up 1, you then need to leave the trigger zone
+	2. When items are dropped on top of each other pressing e only pickups up 1, you then need to leave the trigger zone
 	and reenter to pickup the next one. consider making it so if an item is already there drop it 50cm to the right or something.
 	until it finds an empty space
 */
@@ -128,40 +120,53 @@ void AItem::Tick(float DeltaTime)
 
 void AItem::TriggerEnter(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (bHidden == false)
+	if (OtherActor->IsA(Amallow::StaticClass()))
 	{
-		bItemIsWithinRange = true;
-		mainChar->HUD->bPickupPrompt = true;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
+		if (bHidden == false)
+		{
+			bItemIsWithinRange = true;
+			mainChar->HUD->bPickupPrompt = true;
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
+		}
 	}
+
 }
 
 void AItem::TriggerExit(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (bHidden == false)
+	if (OtherActor->IsA(Amallow::StaticClass()))
 	{
-		bItemIsWithinRange = false;
-		mainChar->HUD->bPickupPrompt = false;
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
+		if (bHidden == false)
+		{
+			bItemIsWithinRange = false;
+			mainChar->HUD->bPickupPrompt = false;
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
+		}
 	}
 }
 
 void AItem::TriggerEnter1(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (bHidden == false)
+	if (OtherActor->IsA(Amallow::StaticClass()))
 	{
-		Text->SetVisibility(true);
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
+		if (bHidden == false)
+		{
+			Text->SetVisibility(true);
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
+		}
 	}
 }
 
 void AItem::TriggerExit1(class UPrimitiveComponent* HitComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (bHidden == false)
+	if (OtherActor->IsA(Amallow::StaticClass()))
 	{
-		Text->SetVisibility(false);
-		//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
+		if (bHidden == false)
+		{
+			Text->SetVisibility(false);
+			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
 
+		}
 	}
 }
 
