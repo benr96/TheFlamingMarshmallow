@@ -18,12 +18,18 @@ struct FCoreItemData
 	FVector offset;
 	FVector Location;
 	float respawnTime;
+
 	bool bFood = false;
-	bool bSpeed = false;
-	bool bDamage = false;
 	float Health = 0;
+
+	bool bSpeed = false;
 	float Speed = 0;
+	float SpeedTime = 0;
+
+	bool bDamage = false;
 	float Damage = 0;
+	float DamageTime = 0;
+
 	bool Active;
 };
 
@@ -33,6 +39,7 @@ class FLAMINGMARSHMALLOW_API AMHUD : public AHUD
 	GENERATED_BODY()
 
 public:
+	//positioning
 	float width;
 	float height;
 
@@ -70,12 +77,22 @@ public:
 	bool bLMouseClicked = false;
 	bool bPickupPrompt = false;
 
-
+	//selected item
 	FCoreItemData selected;
 	int selectedIndex = -1;
 	FCoreItemData initializer;
 
+	//items
 	TArray<FCoreItemData> Slots;
+
+	FTimerHandle FTSpeed;
+	FTimerHandle  FTDamage;
+
+	float SpeedTime;
+	float DamageTime;
+
+	void SpeedTimer();
+	void DamageTimer();
 
 	virtual void DrawHUD() override;
 	void CheckHitboxes();

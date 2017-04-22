@@ -13,9 +13,6 @@
 
 Amallow::Amallow()
 {
-	next = 0;
-	highest = 0;
-
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -56,57 +53,26 @@ Amallow::Amallow()
 		RightEyeVis->SetStaticMesh(RightEyeAsset.Object);
 	}
 
-
-	//input rates
-	TurnRate = 60.0f;
-	LookRate = 60.0f;
-	MaxSpeed = 400.0f;
-	JumpVelocity = 400.0f;
-
-	midJump = false;
-
 	//so it doesn't rotate when the controller rotates
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = false;
 
-	//move character in direction of input
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	//setting rotation rate
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);
-
-	//setting jump velocity
-	GetCharacterMovement()->JumpZVelocity = JumpVelocity;
-
-	//setting max walking speed
-	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
-
-	//setting force in air
-	GetCharacterMovement()->AirControl = 10.0f;
-
+	GetCharacterMovement()->bOrientRotationToMovement = true;//move character in direction of input
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 540.0f, 0.0f);//setting rotation rate
+	GetCharacterMovement()->JumpZVelocity = JumpVelocity;//setting jump velocity
+	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;//setting max walking speed
+	GetCharacterMovement()->AirControl = 10.0f;//setting force in air
 
 	//CAMERA
-	//Init camera boom
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(RootComponent);//Attach camera to the root component
+	CameraBoom->TargetArmLength = 300.0f;//Set camera boom length
+	CameraBoom->bUsePawnControlRotation = true;//make camera rotate based on the controller
 
-	//Attach camera to the root component
-	CameraBoom->SetupAttachment(RootComponent);
-
-	//Set camera boom length
-	CameraBoom->TargetArmLength = 300.0f;
-
-	//make camera rotate based on the controller
-	CameraBoom->bUsePawnControlRotation = true;
-
-	//init actual camera
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-
-	//attach follow camera to socket on boom
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
-
-	//stop camera rotating with controller, so it just rotates with boom
-	FollowCamera->bUsePawnControlRotation = false;
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));//init actual camera
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);//attach follow camera to socket on boom
+	FollowCamera->bUsePawnControlRotation = false;//stop camera rotating with controller, so it just rotates with boom
 
 	//Particle System
 	Flames = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Flames"));
@@ -121,6 +87,9 @@ Amallow::Amallow()
 		Flames->SetTemplate(FlamesAsset.Object);
 	}
 
+	next = 0;
+	highest = 0;
+
 	// Variables for targeting system
 	fMouseSensitivity = 60.0f;
 	mousePitch = 0.0f;
@@ -130,21 +99,25 @@ Amallow::Amallow()
 	health = 100;
 	damage = 25;
 
+	//movement
 	right = false;
 	left = false;
 	forward = false;
 	back = false;
-
 	doubleMove = false;
+	midJump = false;
 
 	originalTime = 0.05;
+	TurnRate = 60.0f;
+	LookRate = 60.0f;
+	MaxSpeed = 400.0f;
+	JumpVelocity = 400.0f;
+	dashState = 0.5;
 
+	//Hud/menus
 	bMenuShow = false;
 	bInvShow = false;
 	bAcceptInput = true;
-
-	dashState = 0.5;
-
 }
 
 // Called when the game starts or when spawned
@@ -278,6 +251,7 @@ void Amallow::ToggleFire()
 
 void Amallow::movementControl()
 {
+	//if in the air after dashing divide velocity by 10 so you don't get an insane boost
 	if (GetCharacterMovement()->Velocity.Z != 0 && doubleMove == true)
 	{
 		GetCharacterMovement()->Velocity = GetCharacterMovement()->Velocity/10;
@@ -659,7 +633,7 @@ void Amallow::Attack()
 	if (bLockOn == true && TestAI[next]->bInAttackRange == true && attackTime == 0 && !GetWorldTimerManager().IsTimerActive(attackHandle))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
-		TestAI[next]->health -= 20;
+		TestAI[next]->health -= damage;
 
 		if (TestAI[next]->health <= 0)
 		{

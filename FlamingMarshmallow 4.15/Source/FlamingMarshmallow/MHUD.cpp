@@ -202,8 +202,10 @@ void AMHUD::CheckHitboxes()
 			//if hit box is the resume button
 			if (HitBoxHits[i]->GetName() == TEXT("30"))
 			{
+				//reset selected
 				selected = initializer;
 				selectedIndex = -1;
+
 				AUI_Controller *PC = (AUI_Controller*)(GetWorld()->GetFirstPlayerController());
 				PC->Resume();//run resume function
 			}
@@ -276,32 +278,72 @@ void AMHUD::useItem()
 
 	if (selected.bSpeed == true)
 	{
-		FString msg = "+" + FString::SanitizeFloat(selected.Speed) + "Speed";
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+		if (GetWorldTimerManager().IsTimerActive(FTSpeed) == true)
+		{
+			FString msg = "+" + FString::SanitizeFloat(SpeedTime);
+			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+		}
+		else
+		{
+			mainChar->MaxSpeed *= selected.Speed;
+			mainChar->GetCharacterMovement()->MaxWalkSpeed = mainChar->MaxSpeed;
 
-		//mainChar->speed += speed or *= or whatever
+			Slots[selectedIndex].Active = false;
+			selected.Active = false;
+			selectedIndex = -1;
+			used--;
 
-		Slots[selectedIndex].Active = false;
-		selected.Active = false;
-		selectedIndex = -1;
-		used--;
+			SpeedTime = selected.SpeedTime;
+			GetWorldTimerManager().SetTimer(FTSpeed, this, &AMHUD::SpeedTimer, 0.01, true);
+		}
 	}
 
 	if (selected.bDamage == true)
 	{
-		FString msg = "+" + FString::SanitizeFloat(selected.Damage) + "Damage";
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+		if (GetWorldTimerManager().IsTimerActive(FTDamage) == true)
+		{
+			FString msg = "+" + FString::SanitizeFloat(DamageTime);
+			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+		}
+		else
+		{
+			mainChar->damage *= selected.Damage;
 
-		//mainChar->damage += damage or *= or whatever
+			Slots[selectedIndex].Active = false;
+			selected.Active = false;
+			selectedIndex = -1;
+			used--;
 
-		Slots[selectedIndex].Active = false;
-		selected.Active = false;
-		selectedIndex = -1;
-		used--;
+			DamageTime = selected.DamageTime;
+			GetWorldTimerManager().SetTimer(FTDamage, this, &AMHUD::DamageTimer, 0.01, true);
+		}
 	}
 }
 
 void AMHUD::drawPickupPrompt()
 {
 	DrawText("Press X to pickup", FLinearColor(1, 1, 0), width/10, height/20,0,1.5);
+}
+
+
+void AMHUD::SpeedTimer()
+{
+	SpeedTime -= 0.01;
+
+	if (SpeedTime == 0)
+	{
+		GetWorldTimerManager().ClearTimer(FTSpeed);
+		//set speed back to original
+	}
+}
+
+void AMHUD::DamageTimer()
+{
+	DamageTime -= 0.01;
+
+	if (DamageTime == 0)
+	{
+		GetWorldTimerManager().ClearTimer(FTDamage);
+		//set damage back to original
+	}
 }

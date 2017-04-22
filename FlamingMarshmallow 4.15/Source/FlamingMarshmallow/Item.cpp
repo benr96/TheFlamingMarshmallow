@@ -76,6 +76,8 @@ void AItem::Initializer(FCoreItemData *Spawner)
 	bFood = Spawner->bFood;//IF HP INC
 	bSpeed = Spawner->bSpeed;//IF SPEED INC
 	bDamage = Spawner->bDamage;//IF DAMAGE INC
+	SpeedTime = Spawner->SpeedTime;//how long boosted for
+	DamageTime = Spawner->DamageTime;
 
 	SetActorLocation(Spawner->Location);
 	this->Mesh->SetWorldScale3D(Spawner->scale);
@@ -130,7 +132,6 @@ void AItem::TriggerEnter(class UPrimitiveComponent* HitComp, class AActor* Other
 		{
 			bItemIsWithinRange = true;
 			mainChar->HUD->bPickupPrompt = true;
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER");
 		}
 	}
 
@@ -144,7 +145,6 @@ void AItem::TriggerExit(class UPrimitiveComponent* HitComp, class AActor* OtherA
 		{
 			bItemIsWithinRange = false;
 			mainChar->HUD->bPickupPrompt = false;
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT");
 		}
 	}
 }
@@ -156,7 +156,6 @@ void AItem::TriggerEnter1(class UPrimitiveComponent* HitComp, class AActor* Othe
 		if (bHidden == false)
 		{
 			Text->SetVisibility(true);
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER ENTER1");
 		}
 	}
 }
@@ -168,7 +167,6 @@ void AItem::TriggerExit1(class UPrimitiveComponent* HitComp, class AActor* Other
 		if (bHidden == false)
 		{
 			Text->SetVisibility(false);
-			//GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, "TRIGGER EXIT 1");
 
 		}
 	}
@@ -180,19 +178,31 @@ void AItem::Pickup()
 
 	for (int i = 0; i < mainChar->HUD->Slots.Num(); i++)
 	{
+		//loop until it find an empty inv slot
 		if (mainChar->HUD->Slots[i].Active == false)
 		{
 			bFullCheck = false;
 			mainChar->HUD->Slots[i].Name = ItemName;
+
 			mainChar->HUD->Slots[i].Mesh = Mesh->GetStaticMesh();
 			mainChar->HUD->Slots[i].InvImage = InvImage;
+
 			mainChar->HUD->Slots[i].Active = true;
+
 			mainChar->HUD->Slots[i].scale = scale;
 			mainChar->HUD->Slots[i].offset = Mesh->RelativeLocation;
+
 			mainChar->HUD->Slots[i].Health = Health;
 			mainChar->HUD->Slots[i].bFood = bFood;
+
 			mainChar->HUD->Slots[i].bSpeed = bSpeed;
+			mainChar->HUD->Slots[i].Speed = Speed;
+			mainChar->HUD->Slots[i].SpeedTime = SpeedTime;
+
 			mainChar->HUD->Slots[i].bDamage = bDamage;
+			mainChar->HUD->Slots[i].Damage = Damage;
+			mainChar->HUD->Slots[i].DamageTime = DamageTime;
+
 			mainChar->HUD->Slots[i].respawnTime = RespawnTimer;
 			
 			break;
@@ -223,8 +233,6 @@ void AItem::Pickup()
 
 		mainChar->HUD->used++;
 	}
-
-
 }
 
 void AItem::Respawn()

@@ -21,6 +21,9 @@ public:
 	float Speed = 0;
 	float Damage = 0;
 
+	float SpeedTime = 0;
+	float DamageTime = 0;
+
 	bool bHidden = false;
 	bool bItemIsWithinRange = false;
 	bool bPickupPrompt = false;
