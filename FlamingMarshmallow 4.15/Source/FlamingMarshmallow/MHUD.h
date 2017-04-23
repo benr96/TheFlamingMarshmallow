@@ -18,10 +18,19 @@ struct FCoreItemData
 	FVector offset;
 	FVector Location;
 	float respawnTime;
-	bool bEdible;
-	float regen;
-	bool Active;
 
+	bool bFood = false;
+	float Health = 0;
+
+	bool bSpeed = false;
+	float Speed = 0;
+	float SpeedTime = 0;
+
+	bool bDamage = false;
+	float Damage = 0;
+	float DamageTime = 0;
+
+	bool Active;
 };
 
 UCLASS()
@@ -30,6 +39,7 @@ class FLAMINGMARSHMALLOW_API AMHUD : public AHUD
 	GENERATED_BODY()
 
 public:
+	//positioning
 	float width;
 	float height;
 
@@ -59,6 +69,11 @@ public:
 	float selectedBoxWidth;
 	float selectedBoxHeight;
 
+	float boostBoxX;
+	float boostBoxY;
+	float boostBoxWidth;
+	float boostBoxHeight;
+
 	int rows;
 	int capacity;
 	int used;
@@ -67,12 +82,27 @@ public:
 	bool bLMouseClicked = false;
 	bool bPickupPrompt = false;
 
-
+	//selected item
 	FCoreItemData selected;
 	int selectedIndex = -1;
 	FCoreItemData initializer;
 
+	//items
 	TArray<FCoreItemData> Slots;
+
+	FTimerHandle FTSpeed;
+	FTimerHandle  FTDamage;
+
+	float SpeedTime;
+	float DamageTime;
+
+	float Speed;
+	float Damage;
+
+	void SpeedTimer();
+	void DamageTimer();
+
+	bool bAlreadyActive = false;
 
 	virtual void DrawHUD() override;
 	void CheckHitboxes();
@@ -80,6 +110,7 @@ public:
 	void dropItem();
 	void useItem();
 	void drawPickupPrompt();
+	void drawBoosts();
 
 	virtual void BeginPlay() override;
 };

@@ -48,14 +48,13 @@ public:
 
 	UTextRenderComponent* Speed;
 
-
-
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float TurnRate;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float LookRate;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float MaxSpeed;
+	float BaseMaxSpeed;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float JumpVelocity;
 
@@ -114,7 +113,13 @@ public:
 	void dashOff(FTimerHandle handle, float *time);
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "C++ Variables")
-	float dashState;
+		float dashState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C++ Variables")
+		float FlameCharge;
+	FTimerHandle FTFlameCharger;
+	void FlameCharger();
+	bool bUsingFlame = false;
 
 	//Targeting functions and variables
 	void LockOnEnemy();
@@ -141,6 +146,8 @@ public:
 	float health;
 
 	float damage;
+	float BaseDamage;
+	float dif;
 	bool bAttackDelay = false;
 	float attackTime = 0;
 	FTimerHandle attackHandle;
@@ -160,6 +167,8 @@ public:
 	AMHUD *HUD;
 	void LMouseClicked();
 	void LMouseReleased();
+
+	bool bDeathMenu = false;
 
 	TArray<FCoreItemData> Inventory;
 

@@ -12,8 +12,9 @@
 
 	1. Mouse focus is an issue, when closing inventory you have to click to give focus back to the game
 	it causes a limit to turning
-*/
 
+	2.food is allowed to be eaten when health is already full, fix this
+*/
 
 void AMHUD::BeginPlay()
 {
@@ -57,6 +58,10 @@ void AMHUD::BeginPlay()
 	useWidth = dropWidth;
 	useHeight = dropHeight;
 
+	boostBoxWidth = width / 7;
+	boostBoxHeight = height / 10;
+	boostBoxX = width - boostBoxWidth - border;
+	boostBoxY = border;
 
 	rows = Slots.Num() / 5;
 
@@ -85,8 +90,6 @@ void AMHUD::BeginPlay()
 
 	used = 0;
 	capacity = Slots.Num();
-
-
 }
 
 void AMHUD::DrawHUD()
@@ -102,6 +105,7 @@ void AMHUD::DrawHUD()
 	}
 
 	CheckHitboxes();
+	drawBoosts();
 }
 
 void AMHUD::drawInv()
@@ -124,6 +128,12 @@ void AMHUD::drawInv()
 	FString cap = FString::FromInt(used) + "/" + FString::FromInt(capacity);
 
 	DrawText(cap, FLinearColor(1, 1, 1), resumeX+SlotWH * 3, resumeY,0,1.25);
+
+
+	if (bAlreadyActive == true)
+	{
+		DrawText("Boost Already Active", FLinearColor(1, 0, 0), resumeX + SlotWH * 3, resumeY + textHeight, 0, 1.25);
+	}
 
 	for (int row = 0; row < rows; row++)
 	{
@@ -161,6 +171,8 @@ void AMHUD::drawInv()
 	//if an item is selected
 	if (selected.Active == true)
 	{
+		FString Line1;
+		FString Line2;
 		GetTextSize(selected.Name, textWidth, textHeight, 0, 1.25);
 
 		DrawRect(FLinearColor(0.1, 0.1, 0.1, 0.75), selectedBoxX, selectedBoxY, selectedBoxWidth, selectedBoxHeight);
@@ -175,7 +187,30 @@ void AMHUD::drawInv()
 		GetTextSize("Use", textWidth, textHeight, 0, 1.25);
 		DrawRect(FLinearColor(0.01, 0.01, 0.01, 0.75), useX, useY, useWidth, useHeight);
 		DrawText("Use", FLinearColor(1, 1, 1), useX + useWidth/2 - textWidth/2, useY + useHeight/2 - textHeight/2,0,1.25);
+
+		if (selected.bFood == true)
+		{
+			Line1 = "Health: +" + FString::SanitizeFloat(selected.Health);
+			Line2 = "";
+		}
+
+		if (selected.bSpeed == true)
+		{
+			Line1 = "Speed: +" + FString::SanitizeFloat(selected.Speed) + "%";
+			Line2 = "Duration: " + FString::SanitizeFloat(selected.SpeedTime) + "s";
+		}
+
+		if (selected.bDamage == true)
+		{
+			Line1 = "Damage: +" + FString::SanitizeFloat(selected.Damage) + "%";
+			Line2 = "Duration: " + FString::SanitizeFloat(selected.DamageTime) + "s";
+		}
+
+
+		DrawText(Line1, FLinearColor(1, 1, 1), selectedBoxX + border, selectedBoxY + border + textHeight*2,0,1.25);
+		DrawText(Line2, FLinearColor(1, 1, 1), selectedBoxX + border, selectedBoxY + border + textHeight * 3,0,1.25);
 	}
+
 
 }
 
@@ -202,8 +237,10 @@ void AMHUD::CheckHitboxes()
 			//if hit box is the resume button
 			if (HitBoxHits[i]->GetName() == TEXT("30"))
 			{
+				//reset selected
 				selected = initializer;
 				selectedIndex = -1;
+
 				AUI_Controller *PC = (AUI_Controller*)(GetWorld()->GetFirstPlayerController());
 				PC->Resume();//run resume function
 			}
@@ -225,12 +262,17 @@ void AMHUD::CheckHitboxes()
 
 void AMHUD::dropItem()
 {
-	//get reference to player via player controller
 	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
-	Amallow *mainChar = PC->mainChar;
+	Amallow  *mainChar = PC->mainChar;
+
+	bool bValidDropLocation = false;
+	bool bCheck = true;
+	
+	FVector location = FVector(mainChar->FloorLoc.X + 50, mainChar->FloorLoc.Y, mainChar->FloorLoc.Z);
 
 	//set items struct location to be directly below the player
-	selected.Location = FVector(mainChar->FloorLoc.X+50, mainChar->FloorLoc.Y, mainChar->FloorLoc.Z);
+	selected.Location = location;
+	selected.respawnTime = 0;
 
 	//spawn and initialze the item
 	AItem *dropped = GetWorld()->SpawnActor<AItem>(AItem::StaticClass());
@@ -245,18 +287,14 @@ void AMHUD::dropItem()
 
 void AMHUD::useItem()
 {
-	Amallow *mainChar;
-
 	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
-	mainChar = PC->mainChar;
+	Amallow *mainChar = PC->mainChar;
 
 	//if item is edible apply changes
-	if (selected.bEdible == true)
+	if (selected.bFood == true)
 	{
-		FString msg = "+" + FString::SanitizeFloat(selected.regen) + "Health";
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
-
-		mainChar->health += selected.regen;
+		bAlreadyActive = false;
+		mainChar->health += selected.Health;
 
 		if (mainChar->health > 100)
 		{
@@ -268,9 +306,132 @@ void AMHUD::useItem()
 		selectedIndex = -1;
 		used--;
 	}
+
+	if (selected.bSpeed == true)
+	{
+		if (GetWorldTimerManager().IsTimerActive(FTSpeed) == true)
+		{
+			bAlreadyActive = true;
+		}
+		else
+		{
+			bAlreadyActive = false;
+
+			float dif = mainChar->MaxSpeed * selected.Speed/100;
+
+			mainChar->MaxSpeed += dif;
+			mainChar->GetCharacterMovement()->MaxWalkSpeed = mainChar->MaxSpeed;
+
+			Slots[selectedIndex].Active = false;
+			selected.Active = false;
+			selectedIndex = -1;
+			used--;
+
+			SpeedTime = selected.SpeedTime;
+			Speed = selected.Speed;
+			GetWorldTimerManager().SetTimer(FTSpeed, this, &AMHUD::SpeedTimer, 1, true);
+		}
+	}
+
+	if (selected.bDamage == true)
+	{
+		if (GetWorldTimerManager().IsTimerActive(FTDamage) == true)
+		{
+			bAlreadyActive = true;
+		}
+		else
+		{
+			bAlreadyActive = false;
+			float dif = mainChar->damage *selected.Damage / 100;
+			mainChar->damage += dif;
+			mainChar->dif = dif;
+
+			Slots[selectedIndex].Active = false;
+			selected.Active = false;
+			selectedIndex = -1;
+			used--;
+
+			DamageTime = selected.DamageTime;
+			Damage = selected.Damage;
+			GetWorldTimerManager().SetTimer(FTDamage, this, &AMHUD::DamageTimer, 1, true);
+		}
+	}
 }
 
 void AMHUD::drawPickupPrompt()
 {
 	DrawText("Press X to pickup", FLinearColor(1, 1, 0), width/10, height/20,0,1.5);
+}
+
+
+void AMHUD::SpeedTimer()
+{
+	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
+	Amallow *mainChar = PC->mainChar;
+
+	SpeedTime -= 1;
+
+	if (SpeedTime < 0)
+	{
+		GetWorldTimerManager().ClearTimer(FTSpeed);
+		mainChar->MaxSpeed = mainChar->BaseMaxSpeed;
+		mainChar->GetCharacterMovement()->MaxWalkSpeed = mainChar->MaxSpeed;
+	}
+}
+
+void AMHUD::DamageTimer()
+{
+	AUI_Controller *PC = (AUI_Controller*)GetWorld()->GetFirstPlayerController();
+	Amallow *mainChar = PC->mainChar;
+
+	DamageTime -= 1;
+
+	if (DamageTime < 0)
+	{
+		GetWorldTimerManager().ClearTimer(FTDamage);
+		mainChar->damage = mainChar->BaseDamage;
+	}
+}
+
+void AMHUD::drawBoosts()
+{
+	float textWidth;
+	float textHeight;
+
+	bool bActive = false;
+
+	DrawRect(FLinearColor(0.1, 0.1, 0.1, 0.75), boostBoxX, boostBoxY, boostBoxWidth, boostBoxHeight);
+	DrawLine(boostBoxX, boostBoxY, boostBoxX + boostBoxWidth, boostBoxY, FLinearColor(1, 0, 0), 2);
+	DrawLine(boostBoxX + boostBoxWidth, boostBoxY,boostBoxX+boostBoxWidth,boostBoxY+boostBoxHeight,FLinearColor(1, 0, 0), 2);
+	DrawLine(boostBoxX + boostBoxWidth, boostBoxY + boostBoxHeight, boostBoxX, boostBoxY + boostBoxHeight, FLinearColor(1, 0, 0), 2);
+	DrawLine(boostBoxX, boostBoxY + boostBoxHeight, boostBoxX, boostBoxY, FLinearColor(1, 0, 0), 2);
+
+	if (GetWorldTimerManager().IsTimerActive(FTSpeed) == true)
+	{
+		FString msg = "Speed +" + FString::SanitizeFloat(Speed) + "% : " + FString::SanitizeFloat(SpeedTime);
+		DrawText(msg, FLinearColor(1, 1, 1,0.75), boostBoxX+border,boostBoxY + border / 2,0,1.25);
+
+		bActive = true;
+	}
+
+	if (GetWorldTimerManager().IsTimerActive(FTDamage) == true)
+	{
+		FString msg = "Damage +" + FString::SanitizeFloat(Damage) + "% : " + FString::SanitizeFloat(DamageTime);
+		GetTextSize(msg, textWidth, textHeight, 0, 1.25);
+		DrawText(msg, FLinearColor(1, 1, 1,0.75), boostBoxX + border, boostBoxY + textHeight*2,0,1.25);
+
+		bActive = true;
+	}
+
+	if (bActive == false)
+	{
+		FString no = "No Active";
+		FString boost = "Boosts";
+
+		GetTextSize(no, textWidth, textHeight,0, 1.25);
+		DrawText(no, FLinearColor(1, 1, 1, 0.75), boostBoxX + boostBoxWidth / 2 - textWidth / 2, boostBoxY + border, 0, 1.25);
+
+		GetTextSize(boost, textWidth, textHeight, 0, 1.25);
+		DrawText(boost, FLinearColor(1, 1, 1, 0.75), boostBoxX + boostBoxWidth / 2 - textWidth / 2, boostBoxY + border + textHeight, 0, 1.25);
+	}
 }

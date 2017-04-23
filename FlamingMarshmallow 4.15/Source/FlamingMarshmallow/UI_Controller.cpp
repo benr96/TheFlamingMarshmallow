@@ -16,7 +16,7 @@ void AUI_Controller::BeginPlay()
 		if (HUD)
 		{
 			HUD->AddToViewport();
-			HUD->SetVisibility(ESlateVisibility::Visible);
+			HUD->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 
@@ -31,14 +31,35 @@ void AUI_Controller::BeginPlay()
 		}
 	}
 
+	if (wMainMenu)
+	{
+		MainMenu = CreateWidget<UUserWidget>(this, wMainMenu);
+
+			if (MainMenu)
+			{
+				MainMenu->AddToViewport();
+				MainMenu->SetVisibility(ESlateVisibility::Visible);
+			}
+	}
+
+	if (wDeathMenu)
+	{
+		DeathMenu = CreateWidget<UUserWidget>(this, wDeathMenu);
+
+		if (DeathMenu)
+		{
+			DeathMenu->AddToViewport();
+			DeathMenu->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+
 
 	GetWorldTimerManager().SetTimer(dashRegenTimer, this, &AUI_Controller::dashRegen, 0.01f, true);
-
 }
 
 void AUI_Controller::Tick(float DeltaSeconds)
 {
-	
+
 }
 
 void AUI_Controller::Settings()
@@ -53,15 +74,22 @@ void AUI_Controller::Quit()
 
 void AUI_Controller::Resume()
 {
+	bMainMenu = false;
 	mainChar->bAcceptInput = true;
 	mainChar->bMenuShow = false;
 	mainChar->bInvShow = false;
 	mainChar->HUD->bDrawInv = false;
+	mainChar->HUD->bAlreadyActive = false;
 	bShowMouseCursor = false;
 	HUD->SetVisibility(ESlateVisibility::Visible);
 	Menu->SetVisibility(ESlateVisibility::Hidden);
+	MainMenu->SetVisibility(ESlateVisibility::Hidden);
 	SetPause(false);
+}
 
+void AUI_Controller::Restart()
+{
+	UGameplayStatics::OpenLevel(this, FName(*GetWorld()->GetName()), false);
 }
 
 void AUI_Controller::dashRegen()

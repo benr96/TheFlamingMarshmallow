@@ -21,9 +21,17 @@ public:
 		TSubclassOf<class UUserWidget> wHUD;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 		TSubclassOf<class UUserWidget> wMenu;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+		TSubclassOf<class UUserWidget> wMainMenu;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+		TSubclassOf<class UUserWidget> wDeathMenu;
 
 	UUserWidget *HUD;
 	UUserWidget *Menu;
+	UUserWidget *MainMenu;
+	UUserWidget *DeathMenu;
+
+	bool bMainMenu = true;
 
 	UFUNCTION(BlueprintCallable, Category = "C++ Functions")
 		void Settings();
@@ -31,6 +39,8 @@ public:
 		void Quit();
 	UFUNCTION(BlueprintCallable, Category = "C++ Functions")
 		void Resume();
+	UFUNCTION(BlueprintCallable, Category = "C++ Functions")
+		void Restart();
 
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
