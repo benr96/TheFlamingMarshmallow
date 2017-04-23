@@ -69,6 +69,11 @@ public:
 	float selectedBoxWidth;
 	float selectedBoxHeight;
 
+	float boostBoxX;
+	float boostBoxY;
+	float boostBoxWidth;
+	float boostBoxHeight;
+
 	int rows;
 	int capacity;
 	int used;
@@ -91,6 +96,9 @@ public:
 	float SpeedTime;
 	float DamageTime;
 
+	float Speed;
+	float Damage;
+
 	void SpeedTimer();
 	void DamageTimer();
 
@@ -100,6 +108,7 @@ public:
 	void dropItem();
 	void useItem();
 	void drawPickupPrompt();
+	void drawBoosts();
 
 	virtual void BeginPlay() override;
 };

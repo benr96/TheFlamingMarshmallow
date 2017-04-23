@@ -46,6 +46,7 @@ public:
 		float LookRate;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float MaxSpeed;
+	float BaseMaxSpeed;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float JumpVelocity;
 
@@ -130,6 +131,7 @@ public:
 	float health;
 
 	float damage;
+	float BaseDamage;
 	bool bAttackDelay = false;
 	float attackTime = 0;
 	FTimerHandle attackHandle;

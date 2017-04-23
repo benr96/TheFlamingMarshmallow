@@ -13,6 +13,41 @@
 
 Amallow::Amallow()
 {
+
+	next = 0;
+	highest = 0;
+
+	// Variables for targeting system
+	fMouseSensitivity = 60.0f;
+	mousePitch = 0.0f;
+	mouseYaw = 0.0f;
+
+	//combat
+	health = 100;
+	damage = 25;
+	BaseDamage = damage;
+
+	//movement
+	right = false;
+	left = false;
+	forward = false;
+	back = false;
+	doubleMove = false;
+	midJump = false;
+
+	originalTime = 0.05;
+	TurnRate = 60.0f;
+	LookRate = 60.0f;
+	MaxSpeed = 400.0f;
+	BaseMaxSpeed = MaxSpeed;
+	JumpVelocity = 400.0f;
+	dashState = 0.5;
+
+	//Hud/menus
+	bMenuShow = false;
+	bInvShow = false;
+	bAcceptInput = true;
+
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -87,37 +122,7 @@ Amallow::Amallow()
 		Flames->SetTemplate(FlamesAsset.Object);
 	}
 
-	next = 0;
-	highest = 0;
 
-	// Variables for targeting system
-	fMouseSensitivity = 60.0f;
-	mousePitch = 0.0f;
-	mouseYaw = 0.0f;
-
-	//combat
-	health = 100;
-	damage = 25;
-
-	//movement
-	right = false;
-	left = false;
-	forward = false;
-	back = false;
-	doubleMove = false;
-	midJump = false;
-
-	originalTime = 0.05;
-	TurnRate = 60.0f;
-	LookRate = 60.0f;
-	MaxSpeed = 400.0f;
-	JumpVelocity = 400.0f;
-	dashState = 0.5;
-
-	//Hud/menus
-	bMenuShow = false;
-	bInvShow = false;
-	bAcceptInput = true;
 }
 
 // Called when the game starts or when spawned
@@ -442,12 +447,14 @@ void Amallow::jump()
 		{
 			GetCharacterMovement()->Velocity += FVector(0, 0, changeZ);//maybe adding straight to velocity isn't the best way to do this
 			midJump = false;
+
 		}
 
 		if (Z == 0)
 		{
 			Jump();
 			midJump = true;
+
 		}
 	}
 }

@@ -30,7 +30,7 @@ ATestGameMode::ATestGameMode()
 		Cone.offset = FVector(0, 0, 0);
 		Cone.Location = FVector(0, 0, 0);
 		Cone.respawnTime = 10;
-		Cone.Health = 20;
+		Cone.Health = 20;//units
 		Cone.bFood = true;
 
 		Cube.Name = "Cube";
@@ -42,6 +42,8 @@ ATestGameMode::ATestGameMode()
 		Cube.respawnTime = 20;
 		Cube.Speed = 0;
 		Cube.bSpeed = true;
+		Cube.Speed = 20;//%
+		Cube.SpeedTime = 20;
 
 		Sphere.Name = "Sphere";
 		Sphere.Mesh = SphereAsset.Object;
@@ -52,6 +54,8 @@ ATestGameMode::ATestGameMode()
 		Sphere.respawnTime = 5;
 		Sphere.Damage = 0;
 		Sphere.bDamage = true;
+		Sphere.Damage = 20;//%
+		Sphere.DamageTime = 20;
 
 		ItemTemplates.Add(Cone);
 		ItemTemplates.Add(Cube);
