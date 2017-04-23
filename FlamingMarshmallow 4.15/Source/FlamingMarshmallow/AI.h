@@ -36,7 +36,7 @@ public:
 	float delayForAttack = 1.5f;
 	float lastTimeInRange;
 	float attackRange = 75.f;
-	bool firstTime = true;
+	bool bfirstTime = true;
 	bool bCanAttack;
 
 	void Attack();
@@ -52,4 +52,6 @@ public:
 	bool bInTargetRange = false;
 	float distToPlayer;
 	FRotator rotationFromChar;
+
+	FString AIname;
 };

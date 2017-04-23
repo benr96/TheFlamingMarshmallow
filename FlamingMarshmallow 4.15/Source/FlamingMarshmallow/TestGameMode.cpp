@@ -55,6 +55,8 @@ ATestGameMode::ATestGameMode()
 		ItemTemplates.Add(Cone);
 		ItemTemplates.Add(Cube);
 		ItemTemplates.Add(Sphere);
+
+		maxEnemies = 10;
 }
 
 void ATestGameMode::BeginPlay()
@@ -66,16 +68,12 @@ void ATestGameMode::BeginPlay()
 	
 	float i = 1;
 
-	while (enemies.Num() < 5)
-	{
-		SpawnAndAddAI(i);
-		i++;
-	}
+	SpawnAndAddAI();
 }
 
-void ATestGameMode::SpawnAndAddAI(float i)
+void ATestGameMode::SpawnAndAddAI()
 {
-	AAI* testAI = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
+	/*AAI* testAI = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
 	testAI->SetActorLocation(FVector(i*60.f, i*10.f, 50.f));
 	if (enemies.Num() % 2 == 0)
 	{
@@ -84,6 +82,28 @@ void ATestGameMode::SpawnAndAddAI(float i)
 	enemies.Add(testAI);
 	mainChar->TestAI.Add(testAI);
 	UE_LOG(LogTemp, Warning, TEXT("%d"), enemies.Num());
+	*/
+	//getting spawn locations for AI
+	TSubclassOf<AAISpawnLoc> AISpawnLoc = AAISpawnLoc::StaticClass();
+
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AISpawnLoc, AISpawnLocations);
+
+	for (int i = 0; i < maxEnemies; i++)
+	{
+		float rand = FMath::RandRange(0, AISpawnLocations.Num() - 1);
+
+		AAISpawnLoc *loc = (AAISpawnLoc*)AISpawnLocations[rand];
+		//FVector location = loc->GetActorLocation();
+
+		if(loc->bOccupied == false)
+		{
+			AAI *spawning = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
+			loc->bOccupied = true;
+			spawning->SetActorLocation(AISpawnLocations[rand]->GetActorLocation());
+			enemies.Add(spawning);
+			mainChar->TestAI.Add(spawning);
+		}
+	}
 }
 
 // Called every frame

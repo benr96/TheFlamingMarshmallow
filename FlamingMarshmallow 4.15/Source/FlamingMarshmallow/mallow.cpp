@@ -22,7 +22,7 @@ Amallow::Amallow()
 	//size of capsule
 	GetCapsuleComponent()->InitCapsuleSize(35.0f, 35.0f);
 	RootComponent = GetCapsuleComponent();
-
+	
 	//creating static mesh
 	MallowVisual = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MallowVisual"));
 	MallowVisual->SetupAttachment(RootComponent);
@@ -36,7 +36,16 @@ Amallow::Amallow()
 		MallowVisual->SetStaticMesh(MallowVisualAsset.Object);
 		MallowVisual->SetRelativeLocation(FVector(5.0f, 0.0f, -12.0f));
 	}
-
+	/*
+	MallowVisual = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MallowVisual"));
+	MallowVisual->SetupAttachment(RootComponent);
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> MallowVisualAsset(TEXT("/Game/MallowParts/marshmallowV5_Body_Skeleton.uasset"));
+	if (MallowVisualAsset.Succeeded())
+	{
+		MallowVisual->SetSkeletalMesh(MallowVisualAsset.Object);
+		MallowVisual->SetRelativeLocation(FVector(5.0f, 0.0f, -12.0f));
+	}
+	*/
 	LeftEyeVis = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("LeftEyeVis"));
 	RightEyeVis = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("RightEyeVis"));
 
@@ -534,19 +543,22 @@ void Amallow::TargetEnemy()
 		next = closest;
 		bFirstLock = false;
 	}
-
-	if (TestAI[next]->bInTargetRange)
+	if (TestAI.Num() > 0)
 	{
+		if (TestAI[next]->bInTargetRange)
+		{
 
-		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
-		rotation.Pitch = mousePitch;
-		rotation.Yaw += 10 * mouseYaw;
-		Controller->SetControlRotation(rotation); 
-	}
-	else
-	{
-		//bLockOn = false;
-		GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("No targets in range.")));
+			FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
+			rotation.Pitch = mousePitch;
+			rotation.Yaw += 10 * mouseYaw;
+			Controller->SetControlRotation(rotation); 
+		}
+		else
+		{
+			bLockOn = false;
+			next = previous;
+			GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("No targets in range.")));
+		}
 	}
 }
 
@@ -567,6 +579,7 @@ void Amallow::FindRight()
 	SortEnemies();
 	if (next < TestAI.Num()-1)
 	{
+		previous = next;
 		next++;
 	}
 }
@@ -576,6 +589,7 @@ void Amallow::FindLeft()
 	SortEnemies();
 	if (next > 0)
 	{
+		previous = next;
 		next--;
 	}
 }
@@ -647,7 +661,7 @@ void Amallow::Attack()
 			UE_LOG(LogTemp, Warning, TEXT("%d"), TestAI.Num());
 			bLockOn = false;
 		}
-		GetWorldTimerManager().SetTimer(attackHandle, this, &Amallow::DelayAttack, .75f, true);
+		GetWorldTimerManager().SetTimer(attackHandle, this, &Amallow::DelayAttack, .4f, true);
 	}
 }
 
