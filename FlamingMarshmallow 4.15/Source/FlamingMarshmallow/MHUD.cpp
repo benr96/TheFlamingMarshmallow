@@ -132,7 +132,7 @@ void AMHUD::drawInv()
 
 	if (bAlreadyActive == true)
 	{
-		DrawText("Boost Already Active", FLinearColor(1, 0, 0), resumeX + SlotWH * 3, resumeY + textHeight, 0, 1.25);
+		DrawText(msg, FLinearColor(1, 0, 0), resumeX + SlotWH * 3, resumeY + textHeight, 0, 1.25);
 	}
 
 	for (int row = 0; row < rows; row++)
@@ -291,7 +291,7 @@ void AMHUD::useItem()
 	Amallow *mainChar = PC->mainChar;
 
 	//if item is edible apply changes
-	if (selected.bFood == true)
+	if (selected.bFood == true && mainChar->health < 100)
 	{
 		bAlreadyActive = false;
 		mainChar->health += selected.Health;
@@ -306,12 +306,18 @@ void AMHUD::useItem()
 		selectedIndex = -1;
 		used--;
 	}
+	else
+	{
+		bAlreadyActive = true;
+		msg = "Health Already Full";
+	}
 
 	if (selected.bSpeed == true)
 	{
 		if (GetWorldTimerManager().IsTimerActive(FTSpeed) == true)
 		{
 			bAlreadyActive = true;
+			msg = "Speed Boost Already Active";
 		}
 		else
 		{
@@ -338,6 +344,7 @@ void AMHUD::useItem()
 		if (GetWorldTimerManager().IsTimerActive(FTDamage) == true)
 		{
 			bAlreadyActive = true;
+			msg = "Damage Boost Already Active";
 		}
 		else
 		{

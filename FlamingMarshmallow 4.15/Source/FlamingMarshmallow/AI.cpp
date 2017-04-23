@@ -11,7 +11,7 @@ Amallow* mallow;
 // Sets default values
 AAI::AAI()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//creating static mesh
@@ -20,18 +20,18 @@ AAI::AAI()
 
 	//find the asset we want to use
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> aiMeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
-	
+
 	//if it found the asset position it correctly
 	if (aiMeshAsset.Succeeded())
 	{
 		aiMesh->SetStaticMesh(aiMeshAsset.Object);
 		aiMesh->SetWorldScale3D(FVector(0.1f, 0.7f, 1.5f));
-		//aiMesh->SetRelativeLocation(FVector(FMath::RandRange(-1100.f, 1100.f), FMath::RandRange(-1000.f, 1000.f), 50.f));
-		aiMesh->SetRelativeLocation(FVector(98.0, 470.f, 160.f));
+		aiMesh->SetRelativeLocation(FVector(.5f, .5f, .5f));
 	}
 
 	left = 1;
 	health = 100;
+	damage = 5;
 }
 
 // Called when the game starts or when spawned
@@ -48,6 +48,7 @@ void AAI::Tick(float DeltaTime)
 	FString AIname = GetName();
 	moveAI();
 	CheckRangeToChar();
+	FlamesCheck();
 
 	if (health <= 0)
 	{
@@ -139,4 +140,12 @@ void AAI::CheckRangeToChar()
 		bInTargetRange = false;
 	}
 	rotationFromChar = UKismetMathLibrary::FindLookAtRotation(mallow->GetActorLocation(), this->GetActorLocation());
+}
+
+void AAI::FlamesCheck()
+{
+	if (bFlameOn == true && Flames->IsActive() == false)
+	{
+		Flames->ToggleActive();
+	}
 }

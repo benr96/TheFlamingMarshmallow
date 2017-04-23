@@ -71,24 +71,28 @@ void ATestGameMode::BeginPlay()
 	
 	float i = 1;
 
-	while (enemies.Num() < 5)
-	{
-		SpawnAndAddAI(i);
-		i++;
-	}
+
+	SpawnAndAddAI(i);
+	i++;
+	
 }
 
 void ATestGameMode::SpawnAndAddAI(float i)
 {
 	AAI* testAI = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
-	testAI->SetActorLocation(FVector(i*60.f, i*10.f, 50.f));
-	if (enemies.Num() % 2 == 0)
+
+	if (testAI)
 	{
-		testAI->left *= -1;
+		testAI->SetActorLocation(FVector(200, 200, 50));
+
+		enemies.Add(testAI);
+		mainChar->TestAI.Add(testAI);
 	}
-	enemies.Add(testAI);
-	mainChar->TestAI.Add(testAI);
-	UE_LOG(LogTemp, Warning, TEXT("%d"), enemies.Num());
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("NOT SPAWNED"));
+
+	}
 }
 
 // Called every frame
@@ -113,6 +117,9 @@ void ATestGameMode::GetMallow()
 	mainChar = (Amallow*)mallows[0];
 	mainChar->AutoPossessPlayer = EAutoReceiveInput::Player0;
 	mainChar->AutoReceiveInput = EAutoReceiveInput::Player0;
+
+	GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, TEXT("POSSESSED"));
+
 }
 
 void ATestGameMode::SpawnItems()

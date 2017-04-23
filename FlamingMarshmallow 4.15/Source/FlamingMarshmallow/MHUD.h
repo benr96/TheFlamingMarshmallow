@@ -103,6 +103,7 @@ public:
 	void DamageTimer();
 
 	bool bAlreadyActive = false;
+	FString msg;
 
 	virtual void DrawHUD() override;
 	void CheckHitboxes();

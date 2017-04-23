@@ -121,6 +121,8 @@ Amallow::Amallow()
 	{
 		Flames->SetTemplate(FlamesAsset.Object);
 	}
+
+	FlameCharge = 0.99;
 }
 
 // Called when the game starts or when spawned
@@ -183,6 +185,12 @@ void Amallow::Tick( float DeltaTime )
 		PC->bShowMouseCursor = true;
 		PC->SetPause(true);
 		bAcceptInput = false;
+	}
+
+	if (FlameCharge <= 0)
+	{
+		Flames->SetActive(false);
+		bUsingFlame = false;
 	}
 
 	if (Flames->IsActive() == true)
@@ -267,7 +275,6 @@ void Amallow::ToggleFire()
 			Flames->ToggleActive();
 			bUsingFlame = true;
 		}
-		
 	}
 }
 
@@ -659,6 +666,11 @@ void Amallow::Attack()
 		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
 		TestAI[next]->health -= damage;
 
+		if (bUsingFlame == true)
+		{
+			TestAI[next]->bFlameOn = true;
+		}
+
 		if (TestAI[next]->health <= 0)
 		{
 			TestAI.RemoveAt(next);
@@ -790,8 +802,7 @@ void Amallow::FlameCharger()
 	{
 		if (FlameCharge <= 1)
 		{
-			FlameCharge += 0.0001;
+			FlameCharge += 0.001;
 		}
 	}
-
 }

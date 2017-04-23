@@ -27,8 +27,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = StaticMeshAssets, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* aiMesh;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
+		UParticleSystemComponent* Flames;
+
 	void moveAI();
 	void followMallow();
+
+	void FlamesCheck();
+	bool bFlameOn = false;
 
 	//Combat variables and functions
 	float health;
