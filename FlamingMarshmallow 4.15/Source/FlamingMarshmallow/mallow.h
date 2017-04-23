@@ -34,7 +34,15 @@ public:
 		UStaticMeshComponent* LeftEyeVis;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* RightEyeVis;
-
+	
+	/*
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
+		USkeletalMeshComponent* MallowVisual;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* LeftEyeVis;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
+		UStaticMeshComponent* RightEyeVis;
+	*/
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UParticleSystemComponent* Flames;
 
@@ -129,6 +137,7 @@ public:
 	float mouseYaw;
 	int next;
 	int highest;
+	int previous;
 	bool bFirstLock = false;
 	int closest = 0;
 

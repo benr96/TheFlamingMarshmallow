@@ -6,6 +6,7 @@
 #include "ItemSpawnLoc.h"
 #include "mallow.h"
 #include "AI.h"
+#include "AISpawnLoc.h"
 #include "UI_Controller.h"
 #include "MHUD.h"
 #include "TestGameMode.generated.h"
@@ -36,8 +37,11 @@ public:
 	FCoreItemData Cube;
 	FCoreItemData Sphere;
 
-	void SpawnAndAddAI(float);
+	void SpawnAndAddAI();
 
 	TArray<AAI*> enemies;
+	TArray<AActor*> AISpawnLocations;
 	Amallow* mainChar;
+
+	int maxEnemies;
 };

@@ -45,7 +45,7 @@ void AAI::BeginPlay()
 void AAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	FString AIname = GetName();
+	AIname = GetName();
 	moveAI();
 	CheckRangeToChar();
 	FlamesCheck();
@@ -56,19 +56,18 @@ void AAI::Tick(float DeltaTime)
 	}
 	if (!mallow->IsPendingKill())
 	{
-		if (bInAttackRange)
+		if (bCanAttack)
 		{
-			if (firstTime)
+			if (bfirstTime)
 			{
 				lastTimeInRange = GetWorld()->GetTimeSeconds();
-				firstTime = false;
+				bfirstTime = false;
 			}
-
 			if (GetWorld()->GetTimeSeconds() - lastTimeInRange >= delayForAttack)
 			{
-				mallow->health -= 20;
+				bfirstTime = true;
+				Attack();
 				UE_LOG(LogTemp, Warning, TEXT("Ouch! %s"), *AIname);
-				firstTime = true;
 			}
 		}
 	}
@@ -83,23 +82,6 @@ void AAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AAI::moveAI()
 {
-	SetActorLocation(FVector(GetActorLocation().X, left*yPos, 50.f));
-
-	if (yPos <= 0 || yPos >= 300)
-	{
-		bHitLimit = true;
-	}
-	else
-	{
-		bHitLimit = false;
-	}
-
-	if (bHitLimit)
-	{
-		inc *= -1;
-	}
-
-	//yPos += inc;
 }
 
 void AAI::followMallow()
@@ -108,8 +90,9 @@ void AAI::followMallow()
 
 void AAI::Attack()
 {
-	mallow->health -= 10;
+	mallow->health -= damage;
 	UE_LOG(LogTemp, Warning, TEXT("Ouch!"));
+	bfirstTime = true;
 }
 
 void AAI::CheckRangeToChar()
