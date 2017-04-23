@@ -12,6 +12,8 @@
 
 	1. Mouse focus is an issue, when closing inventory you have to click to give focus back to the game
 	it causes a limit to turning
+
+	2.food is allowed to be eaten when health is already full, fix this
 */
 
 void AMHUD::BeginPlay()
@@ -127,6 +129,12 @@ void AMHUD::drawInv()
 
 	DrawText(cap, FLinearColor(1, 1, 1), resumeX+SlotWH * 3, resumeY,0,1.25);
 
+
+	if (bAlreadyActive == true)
+	{
+		DrawText("Boost Already Active", FLinearColor(1, 0, 0), resumeX + SlotWH * 3, resumeY + textHeight, 0, 1.25);
+	}
+
 	for (int row = 0; row < rows; row++)
 	{
 		int count = 0;
@@ -163,6 +171,8 @@ void AMHUD::drawInv()
 	//if an item is selected
 	if (selected.Active == true)
 	{
+		FString Line1;
+		FString Line2;
 		GetTextSize(selected.Name, textWidth, textHeight, 0, 1.25);
 
 		DrawRect(FLinearColor(0.1, 0.1, 0.1, 0.75), selectedBoxX, selectedBoxY, selectedBoxWidth, selectedBoxHeight);
@@ -177,7 +187,30 @@ void AMHUD::drawInv()
 		GetTextSize("Use", textWidth, textHeight, 0, 1.25);
 		DrawRect(FLinearColor(0.01, 0.01, 0.01, 0.75), useX, useY, useWidth, useHeight);
 		DrawText("Use", FLinearColor(1, 1, 1), useX + useWidth/2 - textWidth/2, useY + useHeight/2 - textHeight/2,0,1.25);
+
+		if (selected.bFood == true)
+		{
+			Line1 = "Health: +" + FString::SanitizeFloat(selected.Health);
+			Line2 = "";
+		}
+
+		if (selected.bSpeed == true)
+		{
+			Line1 = "Speed: +" + FString::SanitizeFloat(selected.Speed) + "%";
+			Line2 = "Duration: " + FString::SanitizeFloat(selected.SpeedTime) + "s";
+		}
+
+		if (selected.bDamage == true)
+		{
+			Line1 = "Damage: +" + FString::SanitizeFloat(selected.Damage) + "%";
+			Line2 = "Duration: " + FString::SanitizeFloat(selected.DamageTime) + "s";
+		}
+
+
+		DrawText(Line1, FLinearColor(1, 1, 1), selectedBoxX + border, selectedBoxY + border + textHeight*2,0,1.25);
+		DrawText(Line2, FLinearColor(1, 1, 1), selectedBoxX + border, selectedBoxY + border + textHeight * 3,0,1.25);
 	}
+
 
 }
 
@@ -260,9 +293,7 @@ void AMHUD::useItem()
 	//if item is edible apply changes
 	if (selected.bFood == true)
 	{
-		FString msg = "+" + FString::SanitizeFloat(selected.Health) + "Health";
-		GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
-
+		bAlreadyActive = false;
 		mainChar->health += selected.Health;
 
 		if (mainChar->health > 100)
@@ -280,11 +311,12 @@ void AMHUD::useItem()
 	{
 		if (GetWorldTimerManager().IsTimerActive(FTSpeed) == true)
 		{
-			FString msg = "+" + FString::SanitizeFloat(SpeedTime);
-			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+			bAlreadyActive = true;
 		}
 		else
 		{
+			bAlreadyActive = false;
+
 			float dif = mainChar->MaxSpeed * selected.Speed/100;
 
 			mainChar->MaxSpeed += dif;
@@ -305,13 +337,14 @@ void AMHUD::useItem()
 	{
 		if (GetWorldTimerManager().IsTimerActive(FTDamage) == true)
 		{
-			FString msg = "+" + FString::SanitizeFloat(DamageTime);
-			GEngine->AddOnScreenDebugMessage(-1, 3.f, FColor::Yellow, msg);
+			bAlreadyActive = true;
 		}
 		else
 		{
+			bAlreadyActive = false;
 			float dif = mainChar->damage *selected.Damage / 100;
 			mainChar->damage += dif;
+			mainChar->dif = dif;
 
 			Slots[selectedIndex].Active = false;
 			selected.Active = false;

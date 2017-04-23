@@ -121,8 +121,6 @@ Amallow::Amallow()
 	{
 		Flames->SetTemplate(FlamesAsset.Object);
 	}
-
-
 }
 
 // Called when the game starts or when spawned
@@ -133,6 +131,8 @@ void Amallow::BeginPlay()
 	PC = (AUI_Controller*)(GetWorld()->GetFirstPlayerController());
 
 	PC->mainChar = this;
+
+	GetWorldTimerManager().SetTimer(FTFlameCharger, this, &Amallow::FlameCharger, 0.01, true);
 }
 
 // Called every frame
@@ -184,7 +184,19 @@ void Amallow::Tick( float DeltaTime )
 		PC->SetPause(true);
 		bAcceptInput = false;
 	}
-	
+
+	if (Flames->IsActive() == true)
+	{
+		damage = BaseDamage * 3;
+	}
+	else if(GetWorldTimerManager().IsTimerActive(HUD->FTDamage) == true)
+	{
+		damage = BaseDamage + dif;
+	}
+	else
+	{
+		damage = BaseDamage;
+	}
 }
 
 // Called to bind functionality to input
@@ -250,7 +262,12 @@ void Amallow::ToggleFire()
 {
 	if (bAcceptInput == true)
 	{
-		Flames->ToggleActive();
+		if(FlameCharge >= 1)
+		{
+			Flames->ToggleActive();
+			bUsingFlame = true;
+		}
+		
 	}
 }
 
@@ -737,7 +754,6 @@ void Amallow::Pause()
 {
 	bAcceptInput = false;
 	PC->bShowMouseCursor = true;
-	PC->HUD->SetVisibility(ESlateVisibility::Hidden);
 	PC->SetPause(true);
 }
 
@@ -759,4 +775,23 @@ void Amallow::LMouseClicked()
 void Amallow::LMouseReleased()
 {
 	HUD->bLMouseClicked = false;
+}
+
+void Amallow::FlameCharger()
+{
+	if (bUsingFlame == true)
+	{
+		if (FlameCharge >= 0)
+		{
+			FlameCharge -= 0.001;
+		}
+	}
+	else
+	{
+		if (FlameCharge <= 1)
+		{
+			FlameCharge += 0.0001;
+		}
+	}
+
 }

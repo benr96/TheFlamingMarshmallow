@@ -102,6 +102,8 @@ public:
 	void SpeedTimer();
 	void DamageTimer();
 
+	bool bAlreadyActive = false;
+
 	virtual void DrawHUD() override;
 	void CheckHitboxes();
 	void drawInv();

@@ -105,7 +105,13 @@ public:
 	void dashOff(FTimerHandle handle, float *time);
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "C++ Variables")
-	float dashState;
+		float dashState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C++ Variables")
+		float FlameCharge;
+	FTimerHandle FTFlameCharger;
+	void FlameCharger();
+	bool bUsingFlame = false;
 
 	//Targeting functions and variables
 	void LockOnEnemy();
@@ -132,6 +138,7 @@ public:
 
 	float damage;
 	float BaseDamage;
+	float dif;
 	bool bAttackDelay = false;
 	float attackTime = 0;
 	FTimerHandle attackHandle;

@@ -79,6 +79,7 @@ void AUI_Controller::Resume()
 	mainChar->bMenuShow = false;
 	mainChar->bInvShow = false;
 	mainChar->HUD->bDrawInv = false;
+	mainChar->HUD->bAlreadyActive = false;
 	bShowMouseCursor = false;
 	HUD->SetVisibility(ESlateVisibility::Visible);
 	Menu->SetVisibility(ESlateVisibility::Hidden);
