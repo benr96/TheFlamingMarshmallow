@@ -85,7 +85,7 @@ Amallow::Amallow()
 	GetCharacterMovement()->MaxWalkSpeed = MaxSpeed;
 
 	//setting force in air
-	GetCharacterMovement()->AirControl = 0.1f;
+	GetCharacterMovement()->AirControl = 0.5f;
 
 
 	//CAMERA
