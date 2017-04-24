@@ -3,13 +3,10 @@
 //face where camera is looking, maybe only for when locked on
 //limit camera movement so you don't glitch through mallow
 #pragma once
+
 #include "GameFramework/Character.h"
-#include "MHUD.h"
-#include "UI_Controller.h"
 #include "AI.h"
 #include "mallow.generated.h"
-
-
 
 UCLASS()
 class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
@@ -17,9 +14,8 @@ class FLAMINGMARSHMALLOW_API Amallow : public ACharacter
 	GENERATED_BODY()
 
 	// Sets default values for this character's properties
-public:
-	Amallow();
 
+	Amallow();
 
 	//camera components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -34,27 +30,20 @@ public:
 		UStaticMeshComponent* LeftEyeVis;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UStaticMeshComponent* RightEyeVis;
-	
-	/*
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
-		USkeletalMeshComponent* MallowVisual;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
-		UStaticMeshComponent* LeftEyeVis;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
-		UStaticMeshComponent* RightEyeVis;
-	*/
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Visual, meta = (AllowPrivateAccess = "true"))
 		UParticleSystemComponent* Flames;
 
 	UTextRenderComponent* Speed;
 
+
+public:
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float TurnRate;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float LookRate;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float MaxSpeed;
-	float BaseMaxSpeed;
 	UPROPERTY(VisibleAnywhere, Category = Movement)
 		float JumpVelocity;
 
@@ -101,7 +90,6 @@ public:
 	float originalTime;
 	bool doubleMove;
 
-
 	FVector CheckDirection(FString Axis);
 	void movementControl();
 	void TurnAtRate(float Value);
@@ -111,15 +99,6 @@ public:
 	void jump();
 	void dashOn(float acc = 20000000000, float speed = 2500);
 	void dashOff(FTimerHandle handle, float *time);
-
-	UPROPERTY(EditAnywhere,BlueprintReadWrite, Category = "C++ Variables")
-		float dashState;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C++ Variables")
-		float FlameCharge;
-	FTimerHandle FTFlameCharger;
-	void FlameCharger();
-	bool bUsingFlame = false;
 
 	//Targeting functions and variables
 	void LockOnEnemy();
@@ -131,56 +110,25 @@ public:
 	void SortEnemies();
 	void FindClosest();
 
-	TArray<AAI*> AllAI;
+	TArray<AAI*> TestAI;
 	FVector AILocation;
 	float mousePitch;
 	float mouseYaw;
 	int next;
 	int highest;
-	int previous;
 	bool bFirstLock = false;
-	bool bIsTargetting = false;
 	int closest = 0;
 
 	//Combat variables and functions
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C++ Variables")
-		float health;
+	float health;
 	float damage;
-	float BaseDamage;
-	float dif;
 	bool bAttackDelay = false;
 	float attackTime = 0;
 	FTimerHandle attackHandle;
-	FVector PlayerToEnemy;
 
 	void Attack();
 	void DelayAttack();
-	void KnockBack();
 
-	bool bMenuShow;
-	bool bInvShow;
-
-	void ToggleMenu();
-	void ToggleInv();
-	void Pause();
-	void Pickup();
-	void StopPickup();
-	bool bPickup;
-	AMHUD *HUD;
-	void LMouseClicked();
-	void LMouseReleased();
-
-	bool bDeathMenu = false;
-
-	TArray<FCoreItemData> Inventory;
-
-	AUI_Controller *PC;
-
-	bool bAcceptInput;
-
-	FFindFloorResult floor;
-	float distToFloor;
-	FVector FloorLoc;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
