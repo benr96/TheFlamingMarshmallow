@@ -3,6 +3,8 @@
 #pragma once
 
 #include "GameFramework/GameModeBase.h"
+#include "mallow.h"
+#include "AI.h"
 #include "TestGameMode.generated.h"
 
 /**
@@ -22,4 +24,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	APawn* SpawnDefaultPawnFor();
+
+	void SpawnAndAddAI(float);
+
+	TArray<AAI*> enemies;
+	Amallow* mainChar;
 };

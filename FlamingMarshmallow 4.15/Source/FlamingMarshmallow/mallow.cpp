@@ -1,9 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-//TODO put limit on distance of AI from character for targeting
 //TODO allow some Yaw movement (make smoother)
-//TODO everytime TAB is pressed, make it target the closest enemy to center
 //TODO sort array everytime enemy is added/deleted
-//TODO [maybe] make array to allow targeting only if enemy is close enough
 //TODO Fix bug when looking form behind while targeting
 
 #include "FlamingMarshmallow.h"
@@ -18,6 +15,7 @@ Amallow::Amallow()
 {
 	next = 0;
 	highest = 0;
+
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -159,42 +157,15 @@ void Amallow::Tick( float DeltaTime )
 	Super::Tick( DeltaTime );
 
 	movementControl();
-
+	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("%f"), health));
 	if (bLockOn)
 	{
 		TargetEnemy();
 	}
-	/*
-	if (GEngine)
+	if (health <= 0)
 	{
-		//Print debug message
-		GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation0: %f - %f - %f"), Controller->GetControlRotation().Pitch, Controller->GetControlRotation().Roll, Controller->GetControlRotation().Yaw));
+		Destroy();
 	}
-	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
-	rotation.Pitch = 0;
-	rotation.Roll = 0;
-	if (GEngine)
-	{
-		//Print debug message
-		GEngine->AddOnScreenDebugMessage(-20, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation1: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
-	}
-	rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[1]->GetActorLocation());
-	rotation.Pitch = 0;
-	rotation.Roll = 0;
-	if (GEngine)
-	{
-		//Print debug message
-		GEngine->AddOnScreenDebugMessage(-30, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation2: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
-	}
-	rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[2]->GetActorLocation());
-	rotation.Pitch = 0;
-	rotation.Roll = 0;
-	if (GEngine)
-	{
-		//Print debug message
-		GEngine->AddOnScreenDebugMessage(-40, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation3: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
-	}*/
-
 }
 
 // Called to bind functionality to input
@@ -448,14 +419,14 @@ void Amallow::TurnAtRate(float Rate)
 
 void Amallow::LockOnEnemy()
 {
-	//SortEnemies();
 	if (bLockOn) 
 	{
-		
 		bLockOn = false;
 	}
 	else 
 	{
+		next = closest;
+		bFirstLock = true;
 		bLockOn = true;
 	}
 
@@ -484,20 +455,37 @@ void Amallow::LockLeftEnemy()
 
 void Amallow::TargetEnemy()
 {
-	for (int i = 0; i < TestAI.Num(); i++)
+	if (bFirstLock)
 	{
-		TestAI[i]->distToPlayer = GetDistanceTo(TestAI[i]);
-		TestAI[i]->rotationFromChar = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[i]->GetActorLocation());
+		FindClosest();
+		next = closest;
+		bFirstLock = false;
 	}
 
-	FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
-	rotation.Pitch = mousePitch;
-	rotation.Yaw += 10 * mouseYaw;
-	Controller->SetControlRotation(rotation); 
-	if (GEngine)
+	if (TestAI[next]->bInTargetRange)
 	{
-		//Print debug message
-		GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation00: %f - %f - %f"), rotation.Pitch, rotation.Roll, rotation.Yaw));
+
+		FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
+		rotation.Pitch = mousePitch;
+		rotation.Yaw += 10 * mouseYaw;
+		Controller->SetControlRotation(rotation); 
+	}
+	else
+	{
+		//bLockOn = false;
+		GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("No targets in range.")));
+	}
+}
+
+void Amallow::FindClosest()
+{
+	closest = 0;
+	for (int i = 0; i < TestAI.Num(); i++)
+	{
+		if (TestAI[closest]->distToPlayer > TestAI[i]->distToPlayer)
+		{
+			closest = i;
+		}
 	}
 }
 
@@ -513,7 +501,7 @@ void Amallow::FindRight()
 void Amallow::FindLeft()
 {
 	SortEnemies();
-	if (next >= 1)
+	if (next > 0)
 	{
 		next--;
 	}
@@ -542,21 +530,6 @@ void Amallow::SortEnemies()
 	}
 }
 
-void Amallow::Attack()
-{
-	if(bLockOn)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
-		TestAI[next]->health -= 20;
-		if (TestAI[next]->health <= 0)
-		{
-			TestAI.RemoveAt(next);
-			SortEnemies();
-			bLockOn = false;
-		}
-	}
-}
-
 void Amallow::CameraPitch(float fAmount)
 {
 	// Will disable camera movement by player when 'TAB' has been pressed
@@ -580,6 +553,40 @@ void Amallow::CameraYaw(float fAmount)
 		AddControllerYawInput(fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds());
 		mouseYaw = fMouseSensitivity * fAmount * GetWorld()->GetDeltaSeconds();
 	}
+}
+
+void Amallow::Attack()
+{
+	if (bLockOn == true && TestAI[next]->bInAttackRange == true && attackTime == 0 && !GetWorldTimerManager().IsTimerActive(attackHandle))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
+		TestAI[next]->health -= 20;
+
+		if (TestAI[next]->health <= 0)
+		{
+			TestAI.RemoveAt(next);
+			SortEnemies();
+			FindClosest();
+			next = closest;
+			UE_LOG(LogTemp, Warning, TEXT("%d"), TestAI.Num());
+			bLockOn = false;
+		}
+		GetWorldTimerManager().SetTimer(attackHandle, this, &Amallow::DelayAttack, .75f, true);
+	}
+}
+
+void Amallow::DelayAttack()
+{
+	if (attackTime < 1)
+	{
+		attackTime++;
+	}
+	else
+	{
+		attackTime = 0;
+		GetWorldTimerManager().ClearTimer(attackHandle);
+	}
+	UE_LOG(LogTemp, Warning, TEXT("%f"), attackTime);
 }
 
 FVector Amallow::CheckDirection(FString Axis)
