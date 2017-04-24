@@ -9,6 +9,7 @@
 #include "AISpawnLoc.h"
 #include "UI_Controller.h"
 #include "MHUD.h"
+#include "TargetPointer.h"
 #include "TestGameMode.generated.h"
 
 UCLASS()
@@ -42,6 +43,6 @@ public:
 	TArray<AAI*> enemies;
 	TArray<AActor*> AISpawnLocations;
 	Amallow* mainChar;
-
+	//ATargetPointer* pointer;
 	int maxEnemies;
 };
