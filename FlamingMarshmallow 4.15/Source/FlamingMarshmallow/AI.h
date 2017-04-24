@@ -44,9 +44,13 @@ public:
 	float attackRange = 75.f;
 	bool bfirstTime = true;
 	bool bCanAttack;
+	bool bKnock;
+	FRotator rotation;
+	FVector PlayerToThis;
 
 	void Attack();
 	void CheckRangeToChar();
+	void KnockBack();
 
 	//Targeting variables
 	float yPos = 300;

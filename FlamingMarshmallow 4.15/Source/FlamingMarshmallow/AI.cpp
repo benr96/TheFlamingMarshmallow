@@ -29,6 +29,18 @@ AAI::AAI()
 		aiMesh->SetRelativeLocation(FVector(.5f, .5f, .5f));
 	}
 
+	Flames = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Flames"));
+	Flames->SetupAttachment(RootComponent);
+	Flames->bAutoActivate = false;
+	Flames->SetRelativeLocation(FVector(0, 0, 0));
+	
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> FlamesAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
+	
+	if (FlamesAsset.Succeeded())
+	{
+		Flames->SetTemplate(FlamesAsset.Object);
+	}
+
 	left = 1;
 	health = 100;
 	damage = 5;
