@@ -61,7 +61,7 @@ ATestGameMode::ATestGameMode()
 		ItemTemplates.Add(Cube);
 		ItemTemplates.Add(Sphere);
 
-		maxEnemies = 10;
+		maxEnemies = 3;
 }
 
 void ATestGameMode::BeginPlay()
@@ -93,10 +93,10 @@ void ATestGameMode::SpawnAndAddAI()
 		if(loc->bOccupied == false)
 		{
 			AAI *spawning = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
-			loc->bOccupied = true;
+			//loc->bOccupied = true;
 			spawning->SetActorLocation(AISpawnLocations[rand]->GetActorLocation());
 			enemies.Add(spawning);
-			mainChar->TestAI.Add(spawning);
+			mainChar->AllAI.Add(spawning);
 		}
 	}
 }

@@ -13,7 +13,6 @@
 
 Amallow::Amallow()
 {
-
 	next = 0;
 	highest = 0;
 
@@ -571,11 +570,11 @@ void Amallow::TargetEnemy()
 		next = closest;
 		bFirstLock = false;
 	}
-	if (TestAI.Num() > 0)
+	if (AllAI.Num() > 0)
 	{
-		if (TestAI[next]->bInTargetRange)
+		if (AllAI[next]->bInTargetRange)
 		{
-			FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
+			FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), AllAI[next]->GetActorLocation());
 			rotation.Pitch = mousePitch;
 			rotation.Yaw += 10 * mouseYaw;
 			Controller->SetControlRotation(rotation); 
@@ -583,6 +582,7 @@ void Amallow::TargetEnemy()
 		else
 		{
 			bLockOn = false;
+			//bIsTargetting = false;
 			next = previous;
 			GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("No targets in range.")));
 		}
@@ -592,9 +592,9 @@ void Amallow::TargetEnemy()
 void Amallow::FindClosest()
 {
 	closest = 0;
-	for (int i = 0; i < TestAI.Num(); i++)
+	for (int i = 0; i < AllAI.Num(); i++)
 	{
-		if (TestAI[closest]->distToPlayer > TestAI[i]->distToPlayer)
+		if (AllAI[closest]->distToPlayer > AllAI[i]->distToPlayer)
 		{
 			closest = i;
 		}
@@ -604,7 +604,7 @@ void Amallow::FindClosest()
 void Amallow::FindRight()
 {
 	SortEnemies();
-	if (next < TestAI.Num()-1)
+	if (next < AllAI.Num()-1)
 	{
 		previous = next;
 		next++;
@@ -624,16 +624,16 @@ void Amallow::FindLeft()
 void Amallow::SortEnemies()
 {
 	AAI* temp;
-	for (int i = 0; i < TestAI.Num(); i++)
+	for (int i = 0; i < AllAI.Num(); i++)
 	{
 		int swaps = 0;
-		for (int j = 0; j < TestAI.Num()-i-1; j++)
+		for (int j = 0; j < AllAI.Num()-i-1; j++)
 		{
-			if (TestAI[j]->rotationFromChar.Yaw > TestAI[j + 1]->rotationFromChar.Yaw)
+			if (AllAI[j]->rotationFromChar.Yaw > AllAI[j + 1]->rotationFromChar.Yaw)
 			{
-				temp = TestAI[j];
-				TestAI[j] = TestAI[j + 1];
-				TestAI[j + 1] = temp;
+				temp = AllAI[j];
+				AllAI[j] = AllAI[j + 1];
+				AllAI[j + 1] = temp;
 				swaps++;
 			}
 		}
@@ -674,23 +674,23 @@ void Amallow::CameraYaw(float fAmount)
 
 void Amallow::Attack()
 {
-	if (bLockOn == true && TestAI[next]->bInAttackRange == true && attackTime == 0 && !GetWorldTimerManager().IsTimerActive(attackHandle))
+	if (bLockOn == true && AllAI[next]->bInAttackRange == true && attackTime == 0 && !GetWorldTimerManager().IsTimerActive(attackHandle))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
-		TestAI[next]->health -= damage;
-
+		AllAI[next]->health -= damage;
+		KnockBack();
 		if (bUsingFlame == true)
 		{
-			TestAI[next]->bFlameOn = true;
+			AllAI[next]->bFlameOn = true;
 		}
 
-		if (TestAI[next]->health <= 0)
+		if (AllAI[next]->health <= 0)
 		{
-			TestAI.RemoveAt(next);
+			AllAI.RemoveAt(next);
 			SortEnemies();
 			FindClosest();
 			next = closest;
-			UE_LOG(LogTemp, Warning, TEXT("%d"), TestAI.Num());
+			UE_LOG(LogTemp, Warning, TEXT("%d"), AllAI.Num());
 			bLockOn = false;
 		}
 		GetWorldTimerManager().SetTimer(attackHandle, this, &Amallow::DelayAttack, .4f, true);
@@ -708,7 +708,14 @@ void Amallow::DelayAttack()
 		attackTime = 0;
 		GetWorldTimerManager().ClearTimer(attackHandle);
 	}
-	UE_LOG(LogTemp, Warning, TEXT("%f"), attackTime);
+}
+
+void Amallow::KnockBack()
+{
+	PlayerToEnemy = GetActorLocation() - AllAI[next]->GetActorLocation();
+	float LaunchForce = PlayerToEnemy.Normalize() * 1.002f;
+	UE_LOG(LogTemp, Warning, TEXT("FORCE: %f"), LaunchForce);
+	AllAI[next]->SetActorLocation((AllAI[next]->GetActorLocation()*LaunchForce));
 }
 
 FVector Amallow::CheckDirection(FString Axis)

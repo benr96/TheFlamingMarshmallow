@@ -28,6 +28,7 @@ ATargetPointer::ATargetPointer()
 	FRotator newRotation;
 	newRotation.Roll += 180.f;
 	pointer->SetWorldRotation(newRotation);
+	SetActorEnableCollision(false);
 }
 
 // Called when the game starts or when spawned
@@ -37,7 +38,6 @@ void ATargetPointer::BeginPlay()
 
 	player = (Amallow*)(GetWorld()->GetFirstPlayerController()->GetPawn());
 
-	//GetWorld()->SpawnActor<ATargetPointer>(ATargetPointer::StaticClass());
 	location = player->GetActorLocation();
 	SetActorLocation(location);
 	
@@ -50,7 +50,7 @@ void ATargetPointer::Tick(float DeltaTime)
 
 	if (player->bLockOn)
 	{
-		location = player->TestAI[player->next]->GetActorLocation();
+		location = player->AllAI[player->next]->GetActorLocation();
 		location.Z += 180.f;
 		SetActorLocation(location);
 	}

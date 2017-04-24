@@ -45,12 +45,12 @@ public:
 	bool bfirstTime = true;
 	bool bCanAttack;
 	bool bKnock;
-	FRotator rotation;
 	FVector PlayerToThis;
 
 	void Attack();
 	void CheckRangeToChar();
 	void KnockBack();
+	void KnockBackSelf(FVector);
 
 	//Targeting variables
 	float yPos = 300;
@@ -62,6 +62,7 @@ public:
 	bool bInTargetRange = false;
 	float distToPlayer;
 	FRotator rotationFromChar;
+	FRotator rotation;
 
 	FString AIname;
 };

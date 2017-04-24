@@ -131,7 +131,7 @@ public:
 	void SortEnemies();
 	void FindClosest();
 
-	TArray<AAI*> TestAI;
+	TArray<AAI*> AllAI;
 	FVector AILocation;
 	float mousePitch;
 	float mouseYaw;
@@ -139,21 +139,23 @@ public:
 	int highest;
 	int previous;
 	bool bFirstLock = false;
+	bool bIsTargetting = false;
 	int closest = 0;
 
 	//Combat variables and functions
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "C++ Variables")
-	float health;
-
+		float health;
 	float damage;
 	float BaseDamage;
 	float dif;
 	bool bAttackDelay = false;
 	float attackTime = 0;
 	FTimerHandle attackHandle;
+	FVector PlayerToEnemy;
 
 	void Attack();
 	void DelayAttack();
+	void KnockBack();
 
 	bool bMenuShow;
 	bool bInvShow;
