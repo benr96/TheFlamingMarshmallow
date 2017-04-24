@@ -29,18 +29,6 @@ AAI::AAI()
 		aiMesh->SetRelativeLocation(FVector(.5f, .5f, .5f));
 	}
 
-	Flames = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Flames"));
-	Flames->SetupAttachment(RootComponent);
-	Flames->bAutoActivate = false;
-	Flames->SetRelativeLocation(FVector(0, 0, 0));
-
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> FlamesAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
-
-	if (FlamesAsset.Succeeded())
-	{
-		Flames->SetTemplate(FlamesAsset.Object);
-	}
-
 	left = 1;
 	health = 100;
 	damage = 5;
@@ -50,6 +38,7 @@ AAI::AAI()
 void AAI::BeginPlay()
 {
 	Super::BeginPlay();
+
 	mallow = (Amallow*)(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
@@ -60,7 +49,7 @@ void AAI::Tick(float DeltaTime)
 	AIname = GetName();
 	moveAI();
 	CheckRangeToChar();
-	//FlamesCheck();
+	FlamesCheck();
 
 	if (health <= 0)
 	{
@@ -79,6 +68,7 @@ void AAI::Tick(float DeltaTime)
 			{
 				bfirstTime = true;
 				Attack();
+				bCanAttack = false;
 				UE_LOG(LogTemp, Warning, TEXT("Ouch! %s"), *AIname);
 			}
 		}
@@ -103,6 +93,10 @@ void AAI::followMallow()
 void AAI::Attack()
 {
 	mallow->health -= damage;
+	if (bKnock)
+	{
+		KnockBack();
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Ouch!"));
 	bfirstTime = true;
 }
@@ -112,6 +106,9 @@ void AAI::CheckRangeToChar()
 	distToPlayer = GetDistanceTo(mallow);
 	if (distToPlayer <= 750)
 	{
+		rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), mallow->GetActorLocation());
+		rotation.Pitch = 0.f;
+		SetActorRotation(rotation);
 		bInTargetRange = true;
 		if (distToPlayer <= 100)
 		{
@@ -119,6 +116,7 @@ void AAI::CheckRangeToChar()
 			if (distToPlayer <= attackRange)
 			{
 				bCanAttack = true;
+				bKnock = true;
 			}
 			else
 			{
@@ -136,6 +134,29 @@ void AAI::CheckRangeToChar()
 	}
 	rotationFromChar = UKismetMathLibrary::FindLookAtRotation(mallow->GetActorLocation(), this->GetActorLocation());
 }
+
+void AAI::KnockBack()
+{
+	PlayerToThis = GetActorLocation() - mallow->GetActorLocation();
+	float LaunchForce = PlayerToThis.Normalize() * 1.001f;
+	UE_LOG(LogTemp, Warning, TEXT("FORCE: %f"), LaunchForce);
+	mallow->SetActorLocation((mallow->GetActorLocation()*LaunchForce));
+	bKnock = false;
+}
+
+/*void AAI::KnockBackSelf(FVector amount)
+{
+	FHitResult result;
+
+	FVector start = GetActorLocation();
+	//start += amount;
+	//FVector amount = FVector(start.X, start.Y, start.Z - 1);
+	amount.Z -= 5000;
+	GetWorld()->LineTraceSingleByChannel(result, start, amount, ECollisionChannel::ECC_Visibility);
+
+	FloorLoc = result.Location;
+	SetActorLocation(FloorLoc);
+}*/
 
 void AAI::FlamesCheck()
 {
