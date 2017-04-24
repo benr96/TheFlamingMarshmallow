@@ -1,5 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
+//TODO edit TArray enemies (Get rid of)
 #include "FlamingMarshmallow.h"
 #include "mallow.h"
 #include "ShrineSP.h"
@@ -78,17 +78,6 @@ void ATestGameMode::BeginPlay()
 
 void ATestGameMode::SpawnAndAddAI()
 {
-
-	/*AAI* testAI = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
-	testAI->SetActorLocation(FVector(i*60.f, i*10.f, 50.f));
-	if (enemies.Num() % 2 == 0)
-	{
-		testAI->left *= -1;
-	}
-	enemies.Add(testAI);
-	mainChar->TestAI.Add(testAI);
-	UE_LOG(LogTemp, Warning, TEXT("%d"), enemies.Num());
-	*/
 	//getting spawn locations for AI
 	TSubclassOf<AAISpawnLoc> AISpawnLoc = AAISpawnLoc::StaticClass();
 

@@ -575,7 +575,6 @@ void Amallow::TargetEnemy()
 	{
 		if (TestAI[next]->bInTargetRange)
 		{
-
 			FRotator rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), TestAI[next]->GetActorLocation());
 			rotation.Pitch = mousePitch;
 			rotation.Yaw += 10 * mouseYaw;
