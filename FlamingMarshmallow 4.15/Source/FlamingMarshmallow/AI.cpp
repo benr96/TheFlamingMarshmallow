@@ -11,7 +11,7 @@ Amallow* mallow;
 // Sets default values
 AAI::AAI()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	//creating static mesh
@@ -20,24 +20,37 @@ AAI::AAI()
 
 	//find the asset we want to use
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> aiMeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
-	
+
 	//if it found the asset position it correctly
 	if (aiMeshAsset.Succeeded())
 	{
 		aiMesh->SetStaticMesh(aiMeshAsset.Object);
 		aiMesh->SetWorldScale3D(FVector(0.1f, 0.7f, 1.5f));
-		//aiMesh->SetRelativeLocation(FVector(FMath::RandRange(-1100.f, 1100.f), FMath::RandRange(-1000.f, 1000.f), 50.f));
-		aiMesh->SetRelativeLocation(FVector(98.0, 470.f, 160.f));
+		aiMesh->SetRelativeLocation(FVector(.5f, .5f, .5f));
+	}
+
+	Flames = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Flames"));
+	Flames->SetupAttachment(RootComponent);
+	Flames->bAutoActivate = false;
+	Flames->SetRelativeLocation(FVector(0, 0, 0));
+	
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> FlamesAsset(TEXT("/Game/StarterContent/Particles/P_Fire.P_Fire"));
+	
+	if (FlamesAsset.Succeeded())
+	{
+		Flames->SetTemplate(FlamesAsset.Object);
 	}
 
 	left = 1;
 	health = 100;
+	damage = 5;
 }
 
 // Called when the game starts or when spawned
 void AAI::BeginPlay()
 {
 	Super::BeginPlay();
+
 	mallow = (Amallow*)(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
@@ -45,9 +58,10 @@ void AAI::BeginPlay()
 void AAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	FString AIname = GetName();
+	AIname = GetName();
 	moveAI();
 	CheckRangeToChar();
+	FlamesCheck();
 
 	if (health <= 0)
 	{
@@ -55,19 +69,19 @@ void AAI::Tick(float DeltaTime)
 	}
 	if (!mallow->IsPendingKill())
 	{
-		if (bInAttackRange)
+		if (bCanAttack)
 		{
-			if (firstTime)
+			if (bfirstTime)
 			{
 				lastTimeInRange = GetWorld()->GetTimeSeconds();
-				firstTime = false;
+				bfirstTime = false;
 			}
-
 			if (GetWorld()->GetTimeSeconds() - lastTimeInRange >= delayForAttack)
 			{
-				mallow->health -= 20;
+				bfirstTime = true;
+				Attack();
+				bCanAttack = false;
 				UE_LOG(LogTemp, Warning, TEXT("Ouch! %s"), *AIname);
-				firstTime = true;
 			}
 		}
 	}
@@ -82,23 +96,6 @@ void AAI::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 void AAI::moveAI()
 {
-	SetActorLocation(FVector(GetActorLocation().X, left*yPos, 50.f));
-
-	if (yPos <= 0 || yPos >= 300)
-	{
-		bHitLimit = true;
-	}
-	else
-	{
-		bHitLimit = false;
-	}
-
-	if (bHitLimit)
-	{
-		inc *= -1;
-	}
-
-	//yPos += inc;
 }
 
 void AAI::followMallow()
@@ -107,8 +104,13 @@ void AAI::followMallow()
 
 void AAI::Attack()
 {
-	mallow->health -= 10;
+	mallow->health -= damage;
+	if (bKnock)
+	{
+		KnockBack();
+	}
 	UE_LOG(LogTemp, Warning, TEXT("Ouch!"));
+	bfirstTime = true;
 }
 
 void AAI::CheckRangeToChar()
@@ -116,6 +118,9 @@ void AAI::CheckRangeToChar()
 	distToPlayer = GetDistanceTo(mallow);
 	if (distToPlayer <= 750)
 	{
+		rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), mallow->GetActorLocation());
+		rotation.Pitch = 0.f;
+		SetActorRotation(rotation);
 		bInTargetRange = true;
 		if (distToPlayer <= 100)
 		{
@@ -123,6 +128,7 @@ void AAI::CheckRangeToChar()
 			if (distToPlayer <= attackRange)
 			{
 				bCanAttack = true;
+				bKnock = true;
 			}
 			else
 			{
@@ -139,4 +145,35 @@ void AAI::CheckRangeToChar()
 		bInTargetRange = false;
 	}
 	rotationFromChar = UKismetMathLibrary::FindLookAtRotation(mallow->GetActorLocation(), this->GetActorLocation());
+}
+
+void AAI::KnockBack()
+{
+	PlayerToThis = GetActorLocation() - mallow->GetActorLocation();
+	float LaunchForce = PlayerToThis.Normalize() * 1.001f;
+	UE_LOG(LogTemp, Warning, TEXT("FORCE: %f"), LaunchForce);
+	mallow->SetActorLocation((mallow->GetActorLocation()*LaunchForce));
+	bKnock = false;
+}
+
+/*void AAI::KnockBackSelf(FVector amount)
+{
+	FHitResult result;
+
+	FVector start = GetActorLocation();
+	//start += amount;
+	//FVector amount = FVector(start.X, start.Y, start.Z - 1);
+	amount.Z -= 5000;
+	GetWorld()->LineTraceSingleByChannel(result, start, amount, ECollisionChannel::ECC_Visibility);
+
+	FloorLoc = result.Location;
+	SetActorLocation(FloorLoc);
+}*/
+
+void AAI::FlamesCheck()
+{
+	if (bFlameOn == true && Flames->IsActive() == false)
+	{
+		Flames->ToggleActive();
+	}
 }
