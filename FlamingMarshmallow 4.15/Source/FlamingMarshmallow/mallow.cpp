@@ -152,8 +152,8 @@ void Amallow::Tick( float DeltaTime )
 
 	movementControl();
 
-
-	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("%f"), health));
+	playerYaw = GetActorRotation().Yaw;
+	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("%f %f %f"), GetActorRotation().Pitch, GetActorRotation().Roll, GetActorRotation().Yaw));
 	if (bLockOn)
 	{
 		TargetEnemy();
