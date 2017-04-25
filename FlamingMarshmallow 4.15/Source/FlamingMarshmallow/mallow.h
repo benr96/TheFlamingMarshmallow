@@ -150,6 +150,7 @@ public:
 	float dif;
 	bool bAttackDelay = false;
 	float attackTime = 0;
+	float playerYaw;
 	FTimerHandle attackHandle;
 	FVector PlayerToEnemy;
 
