@@ -32,6 +32,10 @@ void AMHUD::BeginPlay()
 	width = ScreenSize.X;
 	height = ScreenSize.Y;
 
+	//overriding due to bug with the above lines not returning anything when packaged
+	width = 1280;
+	height = 720;
+
 	InvX = width * 0.15;
 	InvY = height * 0.15;
 	SlotWH = (width * 0.25 / 6);
