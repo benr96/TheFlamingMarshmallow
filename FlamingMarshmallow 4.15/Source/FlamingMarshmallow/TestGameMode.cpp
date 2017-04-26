@@ -61,7 +61,7 @@ ATestGameMode::ATestGameMode()
 		ItemTemplates.Add(Cube);
 		ItemTemplates.Add(Sphere);
 
-		maxEnemies = 3;
+		maxEnemies = 10;
 }
 
 void ATestGameMode::BeginPlay()
