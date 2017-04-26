@@ -149,10 +149,30 @@ void AAI::CheckRangeToChar()
 
 void AAI::KnockBack()
 {
-	PlayerToThis = GetActorLocation() - amallow->GetActorLocation();
+	FVector newPosition;
+	PlayerToThis = GetActorLocation() - mallow->GetActorLocation();
 	float LaunchForce = PlayerToThis.Normalize() * 1.001f;
 	UE_LOG(LogTemp, Warning, TEXT("FORCE: %f"), LaunchForce);
-	amallow->SetActorLocation((amallow->GetActorLocation()*LaunchForce));
+	newPosition = mallow->GetActorLocation()*LaunchForce;
+
+	if (mallow->playerYaw >= -45.f && mallow->playerYaw <= 45.f)
+	{
+		newPosition.X -= 15.f;
+	}
+	else if (mallow->playerYaw <= 135.f && mallow->playerYaw > 45.f)
+	{
+		newPosition.Y -= 15.f;
+	}
+	else if (mallow->playerYaw >= -135.f && mallow->playerYaw < -45.f)
+	{
+		newPosition.Y += 15.f;
+	}
+	else
+	{
+		newPosition.X += 15.f;
+	}
+	UE_LOG(LogTemp, Warning, TEXT("VECTOR: %f %f %f"), mallow->GetActorLocation().X, mallow->GetActorLocation().Y, mallow->GetActorLocation().Z);
+	mallow->SetActorLocation(newPosition);
 	bKnock = false;
 }
 

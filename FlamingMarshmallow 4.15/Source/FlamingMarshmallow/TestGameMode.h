@@ -40,9 +40,9 @@ public:
 	TArray<FCoreItemData> ItemTemplates;//where the structs that are used to spawn items will be kept
 	TArray<AItem*> Items;
 
-	FCoreItemData Cone;
-	FCoreItemData Cube;
-	FCoreItemData Sphere;
+	FCoreItemData appleRed;
+	FCoreItemData appleBlue;
+	FCoreItemData appleGreen;
 
 	void SpawnAndAddAI();
 
@@ -53,3 +53,4 @@ public:
 	//ATargetPointer* pointer;
 	int maxEnemies;
 };
+

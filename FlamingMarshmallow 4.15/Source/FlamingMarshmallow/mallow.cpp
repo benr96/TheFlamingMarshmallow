@@ -23,7 +23,7 @@ Amallow::Amallow()
 
 	//combat
 	health = 100;
-	damage = 25;
+	damage = 5;
 	BaseDamage = damage;
 
 	//movement
@@ -67,6 +67,19 @@ Amallow::Amallow()
 		MallowVisual->SetStaticMesh(MallowVisualAsset.Object);
 		MallowVisual->SetRelativeLocation(FVector(5.0f, 0.0f, -12.0f));
 	}
+
+	// Creates an audio component
+	propellerAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PropellerAudioComp"));
+
+	// Stopping the sound from playing immediately
+	propellerAudioComponent->bAutoActivate = false;
+
+	// Attaching the sound to the pawn
+	propellerAudioComponent->SetupAttachment(RootComponent);
+
+	// Sound comes from slightly in front of the pawn
+	propellerAudioComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
+
 	/*
 	MallowVisual = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MallowVisual"));
 	MallowVisual->SetupAttachment(RootComponent);
@@ -152,8 +165,8 @@ void Amallow::Tick( float DeltaTime )
 
 	movementControl();
 
-
-	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("%f"), health));
+	playerYaw = GetActorRotation().Yaw;
+	GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("%f %f %f"), GetActorRotation().Pitch, GetActorRotation().Roll, GetActorRotation().Yaw));
 	if (bLockOn)
 	{
 		TargetEnemy();
@@ -474,6 +487,8 @@ void Amallow::jump()
 	{
 		float Z = GetCharacterMovement()->Velocity.Z;
 		float changeZ = 500;//make this relative to current Z so it always has a similar increase(currently double jumping at different levels of normal jump changes overall jump height quite a lot)
+		propellerAudioComponent->Activate(true);
+		propellerAudioComponent->Play();
 
 		if (midJump == true)
 		{
@@ -581,7 +596,7 @@ void Amallow::TargetEnemy()
 		}
 		else
 		{
-			bLockOn = false;
+			//bLockOn = false;
 			//bIsTargetting = false;
 			next = previous;
 			GEngine->AddOnScreenDebugMessage(-50, 1.f, FColor::Yellow, FString::Printf(TEXT("No targets in range.")));
@@ -713,10 +728,33 @@ void Amallow::DelayAttack()
 
 void Amallow::KnockBack()
 {
+	FVector newPosition;
+	FRotator rotation;
+
+	rotation = GetActorRotation();
 	PlayerToEnemy = GetActorLocation() - AllAI[next]->GetActorLocation();
 	float LaunchForce = PlayerToEnemy.Normalize() * 1.002f;
 	UE_LOG(LogTemp, Warning, TEXT("FORCE: %f"), LaunchForce);
-	AllAI[next]->SetActorLocation((AllAI[next]->GetActorLocation()*LaunchForce));
+	newPosition = AllAI[next]->GetActorLocation()*LaunchForce;
+
+	if (rotation.Yaw >= -45.f && rotation.Yaw <= 45.f)
+	{
+		newPosition.Y -= 15.f;
+	}
+	else if (rotation.Yaw <= 135.f && rotation.Yaw > 45.f)
+	{
+		newPosition.X -= 15.f;
+	}
+	else if (rotation.Yaw >= -135.f && rotation.Yaw < -45.f)
+	{
+		newPosition.X += 15.f;
+	}
+	else
+	{
+		newPosition.Y += 15.f;
+	}
+
+	AllAI[next]->SetActorLocation(newPosition);
 }
 
 FVector Amallow::CheckDirection(FString Axis)

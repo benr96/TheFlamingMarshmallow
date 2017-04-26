@@ -11,67 +11,67 @@
 
 ATestGameMode::ATestGameMode()
 {
-		HUDClass = AMHUD::StaticClass();
+	HUDClass = AMHUD::StaticClass();
 
-		//loading in assets for item spawning
-		static ConstructorHelpers::FObjectFinder<UTexture> ConeImage(TEXT("/Game/WorldV3/Textures/Cone"));
-		static ConstructorHelpers::FObjectFinder<UTexture> CubeImage(TEXT("/Game/WorldV3/Textures/Cube"));
-		static ConstructorHelpers::FObjectFinder<UTexture> SphereImage(TEXT("/Game/WorldV3/Textures/sphere"));
+	//loading in assets for item spawning
+	static ConstructorHelpers::FObjectFinder<UTexture> ConeImage(TEXT("/Game/WorldV3/Textures/Cone"));
+	static ConstructorHelpers::FObjectFinder<UTexture> CubeImage(TEXT("/Game/WorldV3/Textures/Cube"));
+	static ConstructorHelpers::FObjectFinder<UTexture> SphereImage(TEXT("/Game/WorldV3/Textures/sphere"));
 
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> ConeAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
-		static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereAsset(TEXT("/Game/StarterContent/Shapes/Shape_Sphere"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ConeAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereAsset(TEXT("/Game/StarterContent/Shapes/Shape_Sphere"));
 
 
-		//setting up the structs used to make each item from, so all you need to make an item is fill out one of these structs
-		//spawn the item class and pass the struct in to its initializer class
-		Cone.Name = "Cone";
-		Cone.Mesh = ConeAsset.Object;
-		Cone.InvImage = ConeImage.Object;
-		Cone.scale = FVector(0.2, 0.2, 0.2);
-		Cone.offset = FVector(0, 0, 0);
-		Cone.Location = FVector(0, 0, 0);
-		Cone.respawnTime = 10;
-		Cone.Health = 20;//units
-		Cone.bFood = true;
+	//setting up the structs used to make each item from, so all you need to make an item is fill out one of these structs
+	//spawn the item class and pass the struct in to its initializer class
+	Cone.Name = "Cone";
+	Cone.Mesh = ConeAsset.Object;
+	Cone.InvImage = ConeImage.Object;
+	Cone.scale = FVector(0.2, 0.2, 0.2);
+	Cone.offset = FVector(0, 0, 0);
+	Cone.Location = FVector(0, 0, 0);
+	Cone.respawnTime = 10;
+	Cone.Health = 20;//units
+	Cone.bFood = true;
 
-		Cube.Name = "Cube";
-		Cube.Mesh = CubeAsset.Object;
-		Cube.InvImage = CubeImage.Object;
-		Cube.scale = FVector(0.2, 0.2, 0.2);
-		Cube.offset = FVector(0, 0, 0);
-		Cube.Location = FVector(0, 0, 0);
-		Cube.respawnTime = 20;
-		Cube.Speed = 0;
-		Cube.bSpeed = true;
-		Cube.Speed = 20;//%
-		Cube.SpeedTime = 20;
+	Cube.Name = "Cube";
+	Cube.Mesh = CubeAsset.Object;
+	Cube.InvImage = CubeImage.Object;
+	Cube.scale = FVector(0.2, 0.2, 0.2);
+	Cube.offset = FVector(0, 0, 0);
+	Cube.Location = FVector(0, 0, 0);
+	Cube.respawnTime = 20;
+	Cube.Speed = 0;
+	Cube.bSpeed = true;
+	Cube.Speed = 20;//%
+	Cube.SpeedTime = 20;
 
-		Sphere.Name = "Sphere";
-		Sphere.Mesh = SphereAsset.Object;
-		Sphere.InvImage = SphereImage.Object;
-		Sphere.scale = FVector(0.2, 0.2, 0.2);
-		Sphere.offset = FVector(0, 0, 0);
-		Sphere.Location = FVector(0, 0, 0);
-		Sphere.respawnTime = 5;
-		Sphere.Damage = 0;
-		Sphere.bDamage = true;
-		Sphere.Damage = 20;//%
-		Sphere.DamageTime = 20;
+	Sphere.Name = "Sphere";
+	Sphere.Mesh = SphereAsset.Object;
+	Sphere.InvImage = SphereImage.Object;
+	Sphere.scale = FVector(0.2, 0.2, 0.2);
+	Sphere.offset = FVector(0, 0, 0);
+	Sphere.Location = FVector(0, 0, 0);
+	Sphere.respawnTime = 5;
+	Sphere.Damage = 0;
+	Sphere.bDamage = true;
+	Sphere.Damage = 20;//%
+	Sphere.DamageTime = 20;
 
-		ItemTemplates.Add(Cone);
-		ItemTemplates.Add(Cube);
-		ItemTemplates.Add(Sphere);
+	ItemTemplates.Add(Cone);
+	ItemTemplates.Add(Cube);
+	ItemTemplates.Add(Sphere);
 
-		maxEnemies = 3;
+	maxEnemies = 10;
 
-		//Linking the blueprint
-		static ConstructorHelpers::FObjectFinder<UBlueprint> Enemy_BP(TEXT("Blueprint'/Game/BP_EnemyCharacter.BP_EnemyCharacter'"));
+	//Linking the blueprint
+	static ConstructorHelpers::FObjectFinder<UBlueprint> Enemy_BP(TEXT("Blueprint'/Game/BP_EnemyCharacter.BP_EnemyCharacter'"));
 
-		if (Enemy_BP.Object)
-		{
-			BP_EnemyCharacter = (UClass*)Enemy_BP.Object->GeneratedClass;
-		}
+	if (Enemy_BP.Object)
+	{
+		BP_EnemyCharacter = (UClass*)Enemy_BP.Object->GeneratedClass;
+	}
 }
 
 void ATestGameMode::BeginPlay()
@@ -93,7 +93,7 @@ void ATestGameMode::SpawnAndAddAI()
 	TSubclassOf<AAISpawnLoc> AISpawnLoc = AAISpawnLoc::StaticClass();
 
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AISpawnLoc, AISpawnLocations);               
-	/*
+	
 	for (int i = 0; i < maxEnemies; i++)
 	{
 		float rand = FMath::RandRange(0, AISpawnLocations.Num() - 1);
@@ -105,16 +105,16 @@ void ATestGameMode::SpawnAndAddAI()
 		if(loc->bOccupied == false)
 		{
 			//AAI *spawning = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
-			//AEnemyCharacter *spawning = GetWorld()->SpawnActor<AEnemyCharacter>(BP_EnemyCharacter);
+			AEnemyCharacter *spawning = GetWorld()->SpawnActor<AEnemyCharacter>(BP_EnemyCharacter);
 			//AEnemyAI *spawning = GetWorld()->SpawnActor<AEnemyAI>(AEnemyAI::StaticClass());
 			//loc->bOccupied = true;
-			//spawning->SetActorLocation(AISpawnLocations[rand]->GetActorLocation());
+			spawning->SetActorLocation(AISpawnLocations[rand]->GetActorLocation());
 			//AEnemyCharacter::SpawnAI(AISpawnLocations[rand]->GetActorLocation());
-			//enemies.Add(spawning);
-			//mainChar->AllAI.Add(spawning);
+			enemies.Add(spawning);
+			mainChar->AllAI.Add(spawning);
 		}
 	}
-	*/
+	
 	for (int i = 0; i < bp_enemies.Num(); i++)
 	{
 		mainChar->AllAI.Add((AEnemyCharacter*)bp_enemies[i]);

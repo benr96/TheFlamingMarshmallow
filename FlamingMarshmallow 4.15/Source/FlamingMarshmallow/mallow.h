@@ -152,6 +152,7 @@ public:
 	float dif;
 	bool bAttackDelay = false;
 	float attackTime = 0;
+	float playerYaw;
 	FTimerHandle attackHandle;
 	FVector PlayerToEnemy;
 
@@ -185,6 +186,11 @@ public:
 	FFindFloorResult floor;
 	float distToFloor;
 	FVector FloorLoc;
+
+	// Audio components
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* propellerAudioComponent;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
