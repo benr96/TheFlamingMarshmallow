@@ -52,6 +52,7 @@ At around the same time as the melting incident, the Chocolate kingdom also look
 Mallow was but a child and yet he was sent off on his own outside the safety of his village for the first time. Unsure of the fate his parents and everyone he had ever knew or cared about held, Mallow began to grow a resentment towards the kingdom of Chocolate, the ones who were propagating and prolonging the needless war in mallows eyes and in this rage and resentment, Mallow swore to take 
 revenge on the Chocolate kingdom and end this war once and for all. Armed with the power of being able to burst into flames at will, mallow holds a crucial advantages that could swing the tides of power between the two kingdoms.
 
+This game is but a snapshot of the trials that mallow must make.
 
 
 
