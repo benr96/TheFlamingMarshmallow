@@ -54,7 +54,7 @@ public:
 	float damage;
 	float delayForAttack = 1.5f;
 	float lastTimeInRange;
-	float attackRange = 75.f;
+	float attackRange = 85.f;
 	bool bfirstTime = true;
 	bool bCanAttack;
 	bool bKnock;

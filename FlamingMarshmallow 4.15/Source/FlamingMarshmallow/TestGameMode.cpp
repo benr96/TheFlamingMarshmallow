@@ -14,54 +14,53 @@ ATestGameMode::ATestGameMode()
 	HUDClass = AMHUD::StaticClass();
 
 	//loading in assets for item spawning
-	static ConstructorHelpers::FObjectFinder<UTexture> ConeImage(TEXT("/Game/WorldV3/Textures/Cone"));
-	static ConstructorHelpers::FObjectFinder<UTexture> CubeImage(TEXT("/Game/WorldV3/Textures/Cube"));
-	static ConstructorHelpers::FObjectFinder<UTexture> SphereImage(TEXT("/Game/WorldV3/Textures/sphere"));
+	static ConstructorHelpers::FObjectFinder<UTexture> appleRedImage(TEXT("/Game/appleRed"));
+	static ConstructorHelpers::FObjectFinder<UTexture> appleBlueImage(TEXT("/Game/appleBlue"));
+	static ConstructorHelpers::FObjectFinder<UTexture> appleGreenImage(TEXT("/Game/appleGreen"));
 
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> ConeAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cone"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> CubeAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereAsset(TEXT("/Game/StarterContent/Shapes/Shape_Sphere"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> appleBlueAsset(TEXT("/Game/WorldV3/Assets/demApplesBlue"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> appleRedAsset(TEXT("/Game/WorldV3/Assets/demApplesRed"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> appleGreenAsset(TEXT("/Game/WorldV3/Assets/demApplesGreen"));
 
 
 	//setting up the structs used to make each item from, so all you need to make an item is fill out one of these structs
 	//spawn the item class and pass the struct in to its initializer class
-	Cone.Name = "Cone";
-	Cone.Mesh = ConeAsset.Object;
-	Cone.InvImage = ConeImage.Object;
-	Cone.scale = FVector(0.2, 0.2, 0.2);
-	Cone.offset = FVector(0, 0, 0);
-	Cone.Location = FVector(0, 0, 0);
-	Cone.respawnTime = 10;
-	Cone.Health = 20;//units
-	Cone.bFood = true;
+	appleBlue.Name = "Speed Boost";
+	appleBlue.Mesh = appleBlueAsset.Object;
+	appleBlue.InvImage = appleBlueImage.Object;
+	appleBlue.scale = FVector(1, 1, 1);
+	appleBlue.offset = FVector(0, 0, -23);
+	appleBlue.Location = FVector(0, 0, 0);
+	appleBlue.respawnTime = 10;
+	appleBlue.Health = 20;//units
+	appleBlue.bFood = true;
 
-	Cube.Name = "Cube";
-	Cube.Mesh = CubeAsset.Object;
-	Cube.InvImage = CubeImage.Object;
-	Cube.scale = FVector(0.2, 0.2, 0.2);
-	Cube.offset = FVector(0, 0, 0);
-	Cube.Location = FVector(0, 0, 0);
-	Cube.respawnTime = 20;
-	Cube.Speed = 0;
-	Cube.bSpeed = true;
-	Cube.Speed = 20;//%
-	Cube.SpeedTime = 20;
+	appleRed.Name = "Healing item";
+	appleRed.Mesh = appleRedAsset.Object;
+	appleRed.InvImage = appleRedImage.Object;
+	appleRed.scale = FVector(1, 1, 1);
+	appleRed.offset = FVector(0, 0, -30);
+	appleRed.Location = FVector(0, 0, 0);
+	appleRed.respawnTime = 20;
+	appleRed.Speed = 0;
+	appleRed.bSpeed = true;
+	appleRed.Speed = 20;//%
+	appleRed.SpeedTime = 20;
 
-	Sphere.Name = "Sphere";
-	Sphere.Mesh = SphereAsset.Object;
-	Sphere.InvImage = SphereImage.Object;
-	Sphere.scale = FVector(0.2, 0.2, 0.2);
-	Sphere.offset = FVector(0, 0, 0);
-	Sphere.Location = FVector(0, 0, 0);
-	Sphere.respawnTime = 5;
-	Sphere.Damage = 0;
-	Sphere.bDamage = true;
-	Sphere.Damage = 20;//%
-	Sphere.DamageTime = 20;
+	appleGreen.Mesh = appleGreenAsset.Object;
+	appleGreen.InvImage = appleGreenImage.Object;
+	appleGreen.scale = FVector(1, 1, 1);
+	appleGreen.offset = FVector(0, 0, 0);
+	appleGreen.Location = FVector(0, 0, 0);
+	appleGreen.respawnTime = 5;
+	appleGreen.Damage = 0;
+	appleGreen.bDamage = true;
+	appleGreen.Damage = 20;//%
+	appleGreen.DamageTime = 20;
 
-	ItemTemplates.Add(Cone);
-	ItemTemplates.Add(Cube);
-	ItemTemplates.Add(Sphere);
+	ItemTemplates.Add(appleBlue);
+	ItemTemplates.Add(appleRed);
+	ItemTemplates.Add(appleGreen);
 
 	maxEnemies = 10;
 

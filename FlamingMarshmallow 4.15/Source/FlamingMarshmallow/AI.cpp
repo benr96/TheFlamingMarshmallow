@@ -150,20 +150,20 @@ void AAI::CheckRangeToChar()
 void AAI::KnockBack()
 {
 	FVector newPosition;
-	PlayerToThis = GetActorLocation() - mallow->GetActorLocation();
+	PlayerToThis = GetActorLocation() - amallow->GetActorLocation();
 	float LaunchForce = PlayerToThis.Normalize() * 1.001f;
 	UE_LOG(LogTemp, Warning, TEXT("FORCE: %f"), LaunchForce);
-	newPosition = mallow->GetActorLocation()*LaunchForce;
+	newPosition = amallow->GetActorLocation()*LaunchForce;
 
-	if (mallow->playerYaw >= -45.f && mallow->playerYaw <= 45.f)
+	if (amallow->playerYaw >= -45.f && amallow->playerYaw <= 45.f)
 	{
 		newPosition.X -= 15.f;
 	}
-	else if (mallow->playerYaw <= 135.f && mallow->playerYaw > 45.f)
+	else if (amallow->playerYaw <= 135.f && amallow->playerYaw > 45.f)
 	{
 		newPosition.Y -= 15.f;
 	}
-	else if (mallow->playerYaw >= -135.f && mallow->playerYaw < -45.f)
+	else if (amallow->playerYaw >= -135.f && amallow->playerYaw < -45.f)
 	{
 		newPosition.Y += 15.f;
 	}
@@ -171,8 +171,8 @@ void AAI::KnockBack()
 	{
 		newPosition.X += 15.f;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("VECTOR: %f %f %f"), mallow->GetActorLocation().X, mallow->GetActorLocation().Y, mallow->GetActorLocation().Z);
-	mallow->SetActorLocation(newPosition);
+	UE_LOG(LogTemp, Warning, TEXT("VECTOR: %f %f %f"), amallow->GetActorLocation().X, amallow->GetActorLocation().Y, amallow->GetActorLocation().Z);
+	amallow->SetActorLocation(newPosition);
 	bKnock = false;
 }
 
