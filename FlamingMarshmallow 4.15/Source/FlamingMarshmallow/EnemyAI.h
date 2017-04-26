@@ -25,6 +25,9 @@ class FLAMINGMARSHMALLOW_API AEnemyAI : public AAIController
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	FName LocationToGoKey;
 
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	FName BlackboardKey = "Target";
+
 	/*I use the AActor class as the Template class so I can use the GetAllActorsOfClass function.
 	However, in this collection I'm going to store all the Available ABotTargetPoint instances.*/
 	TArray<AActor*> BotTargetPoints;
@@ -32,6 +35,7 @@ class FLAMINGMARSHMALLOW_API AEnemyAI : public AAIController
 	/*Posses is executed when the character we want to control is spawned.
 	Inside this function, we initialize the blackboard and start the behavior tree*/
 	virtual void Possess(APawn* Pawn) override;
+
 
 public:
 
@@ -42,5 +46,6 @@ public:
 
 	FORCEINLINE TArray<AActor*> GetAvailableTargetPoints() { return BotTargetPoints; }
 	
+	void SetSeenTarget(APawn* Pawn);
 	
 };
