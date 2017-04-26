@@ -4,6 +4,8 @@
 #include "mallow.h"
 #include "ShrineSP.h"
 #include "AI.h"
+#include "EnemyCharacter.h"
+#include "EnemyAI.h"
 #include "EngineUtils.h"
 #include "TestGameMode.h"
 
@@ -62,6 +64,14 @@ ATestGameMode::ATestGameMode()
 		ItemTemplates.Add(Sphere);
 
 		maxEnemies = 3;
+
+		//Linking the blueprint
+		static ConstructorHelpers::FObjectFinder<UBlueprint> Enemy_BP(TEXT("Blueprint'/Game/BP_EnemyCharacter.BP_EnemyCharacter'"));
+
+		if (Enemy_BP.Object)
+		{
+			BP_EnemyCharacter = (UClass*)Enemy_BP.Object->GeneratedClass;
+		}
 }
 
 void ATestGameMode::BeginPlay()
@@ -74,6 +84,7 @@ void ATestGameMode::BeginPlay()
 	float i = 1;
 
 	SpawnAndAddAI();
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BP_EnemyCharacter, bp_enemies);
 }
 
 void ATestGameMode::SpawnAndAddAI()
@@ -81,23 +92,32 @@ void ATestGameMode::SpawnAndAddAI()
 	//getting spawn locations for AI
 	TSubclassOf<AAISpawnLoc> AISpawnLoc = AAISpawnLoc::StaticClass();
 
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AISpawnLoc, AISpawnLocations);
-
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AISpawnLoc, AISpawnLocations);               
+	/*
 	for (int i = 0; i < maxEnemies; i++)
 	{
 		float rand = FMath::RandRange(0, AISpawnLocations.Num() - 1);
 
 		AAISpawnLoc *loc = (AAISpawnLoc*)AISpawnLocations[rand];
-		//FVector location = loc->GetActorLocation();
-
+		FVector location = loc->GetActorLocation();
+		FActorSpawnParameters SpawnInfo;
+		SpawnInfo.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 		if(loc->bOccupied == false)
 		{
-			AAI *spawning = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
+			//AAI *spawning = GetWorld()->SpawnActor<AAI>(AAI::StaticClass());
+			//AEnemyCharacter *spawning = GetWorld()->SpawnActor<AEnemyCharacter>(BP_EnemyCharacter);
+			//AEnemyAI *spawning = GetWorld()->SpawnActor<AEnemyAI>(AEnemyAI::StaticClass());
 			//loc->bOccupied = true;
-			spawning->SetActorLocation(AISpawnLocations[rand]->GetActorLocation());
-			enemies.Add(spawning);
-			mainChar->AllAI.Add(spawning);
+			//spawning->SetActorLocation(AISpawnLocations[rand]->GetActorLocation());
+			//AEnemyCharacter::SpawnAI(AISpawnLocations[rand]->GetActorLocation());
+			//enemies.Add(spawning);
+			//mainChar->AllAI.Add(spawning);
 		}
+	}
+	*/
+	for (int i = 0; i < bp_enemies.Num(); i++)
+	{
+		mainChar->AllAI.Add((AEnemyCharacter*)bp_enemies[i]);
 	}
 }
 

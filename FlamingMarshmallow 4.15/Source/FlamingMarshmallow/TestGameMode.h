@@ -6,6 +6,7 @@
 #include "ItemSpawnLoc.h"
 #include "mallow.h"
 #include "AI.h"
+#include "EnemyCharacter.h"
 #include "AISpawnLoc.h"
 #include "UI_Controller.h"
 #include "MHUD.h"
@@ -29,6 +30,11 @@ public:
 	void GetMallow();
 	void SpawnItems();
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	TSubclassOf<class AEnemyCharacter> BP_EnemyCharacter;
+
+	TArray<AActor*> bp_enemies;
+
 	TArray<AActor*> ItemSpawnLocations;//where items will be randomly spawned
 	TArray<AActor*> mallows;
 	TArray<FCoreItemData> ItemTemplates;//where the structs that are used to spawn items will be kept
@@ -40,7 +46,8 @@ public:
 
 	void SpawnAndAddAI();
 
-	TArray<AAI*> enemies;
+	//TArray<AAI*> enemies;
+	TArray<AEnemyCharacter*> enemies;
 	TArray<AActor*> AISpawnLocations;
 	Amallow* mainChar;
 	//ATargetPointer* pointer;

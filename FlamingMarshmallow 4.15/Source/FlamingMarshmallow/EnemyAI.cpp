@@ -46,6 +46,13 @@ void AEnemyAI::Possess(APawn* Pawn)
 	}
 }
 
-
+void AEnemyAI::SetSeenTarget(APawn* Pawn)
+{
+	//Registers the Pawn that the AI has seen in the blackboard
+	if (BlackboardComp)
+	{
+		BlackboardComp->SetValueAsObject(BlackboardKey, Pawn);
+	}
+}
 
 

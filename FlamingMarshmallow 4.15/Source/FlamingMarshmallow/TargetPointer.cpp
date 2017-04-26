@@ -5,7 +5,8 @@
 #include "mallow.h"
 
 Amallow* player;
-AAI* TargetedAI;
+//AAI* TargetedAI;
+AEnemyCharacter* TargetAI;
 
 // Sets default values
 ATargetPointer::ATargetPointer()
@@ -48,7 +49,7 @@ void ATargetPointer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (player->bLockOn)
+	if (player->bLockOn == true && player->AllAI.Num() > 0)
 	{
 		location = player->AllAI[player->next]->GetActorLocation();
 		location.Z += 180.f;
