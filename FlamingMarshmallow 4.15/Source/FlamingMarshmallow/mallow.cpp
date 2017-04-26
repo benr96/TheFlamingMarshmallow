@@ -23,7 +23,7 @@ Amallow::Amallow()
 
 	//combat
 	health = 100;
-	damage = 5;
+	damage = 20;
 	BaseDamage = damage;
 
 	//movement

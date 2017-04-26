@@ -83,8 +83,8 @@ void ATestGameMode::BeginPlay()
 	
 	float i = 1;
 
-	SpawnAndAddAI();
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BP_EnemyCharacter, bp_enemies);
+	SpawnAndAddAI();
 }
 
 void ATestGameMode::SpawnAndAddAI()

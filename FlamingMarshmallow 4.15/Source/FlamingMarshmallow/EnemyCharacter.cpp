@@ -23,17 +23,17 @@ AEnemyCharacter::AEnemyCharacter()
 	aiMesh->SetupAttachment(RootComponent);
 
 	//find the asset we want to use
-	static ConstructorHelpers::FObjectFinder<UStaticMesh> aiMeshAsset(TEXT("/Game/StarterContent/Shapes/Shape_Cube"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> aiMeshAsset(TEXT("/Game/WorldV3/Assets/choco1"));
 
 
 	//if it found the asset position it correctly
 	if (aiMeshAsset.Succeeded())
 	{
 		aiMesh->SetStaticMesh(aiMeshAsset.Object);
-		aiMesh->SetWorldScale3D(FVector(0.1f, 0.7f, 1.5f));
-		aiMesh->SetRelativeLocation(FVector(.5f, .5f, -50.f));
+		aiMesh->SetWorldScale3D(FVector(1, 1, 1));
+		aiMesh->SetRelativeLocation(FVector(.5f, .5f, .5f));
 	}
-
+	 
 	Flames = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Flames"));
 	Flames->SetupAttachment(RootComponent);
 	Flames->bAutoActivate = false;
