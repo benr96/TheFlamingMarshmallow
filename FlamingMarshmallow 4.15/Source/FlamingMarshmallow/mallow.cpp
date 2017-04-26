@@ -69,16 +69,20 @@ Amallow::Amallow()
 	}
 
 	// Creates an audio component
-	propellerAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PropellerAudioComp"));
+	jumpAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("JumpAudioComp"));
+	attackAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("AttackAudioComp"));
 
 	// Stopping the sound from playing immediately
-	propellerAudioComponent->bAutoActivate = false;
+	jumpAudioComponent->bAutoActivate = false;
+	attackAudioComponent->bAutoActivate = false;
 
 	// Attaching the sound to the pawn
-	propellerAudioComponent->SetupAttachment(RootComponent);
+	jumpAudioComponent->SetupAttachment(RootComponent);
+	attackAudioComponent->SetupAttachment(RootComponent);
 
 	// Sound comes from slightly in front of the pawn
-	propellerAudioComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
+	jumpAudioComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
+	attackAudioComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
 
 	/*
 	MallowVisual = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MallowVisual"));
@@ -487,13 +491,13 @@ void Amallow::jump()
 	{
 		float Z = GetCharacterMovement()->Velocity.Z;
 		float changeZ = 500;//make this relative to current Z so it always has a similar increase(currently double jumping at different levels of normal jump changes overall jump height quite a lot)
-		propellerAudioComponent->Activate(true);
-		propellerAudioComponent->Play();
 
 		if (midJump == true)
 		{
 			GetCharacterMovement()->Velocity += FVector(0, 0, changeZ);//maybe adding straight to velocity isn't the best way to do this
 			midJump = false;
+			jumpAudioComponent->Activate(true);
+			jumpAudioComponent->Play();
 
 		}
 
@@ -501,6 +505,8 @@ void Amallow::jump()
 		{
 			Jump();
 			midJump = true;
+			jumpAudioComponent->Activate(true);
+			jumpAudioComponent->Play();
 
 		}
 	}
@@ -693,6 +699,8 @@ void Amallow::Attack()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("DIE!"));
 		AllAI[next]->health -= damage;
+		attackAudioComponent->Activate(true);
+		attackAudioComponent->Play();
 		KnockBack();
 		if (bUsingFlame == true)
 		{

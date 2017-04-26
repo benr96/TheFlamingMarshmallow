@@ -185,7 +185,11 @@ public:
 
 	// Audio components
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
-	UAudioComponent* propellerAudioComponent;
+	UAudioComponent* jumpAudioComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* attackAudioComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* damageAudioComponent;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

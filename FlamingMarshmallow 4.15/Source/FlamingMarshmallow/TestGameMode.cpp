@@ -23,27 +23,27 @@ ATestGameMode::ATestGameMode()
 
 		//setting up the structs used to make each item from, so all you need to make an item is fill out one of these structs
 		//spawn the item class and pass the struct in to its initializer class
-		appleBlue.Name = "Speed Boost";
-		appleBlue.Mesh = appleBlueAsset.Object;
-		appleBlue.InvImage = appleBlueImage.Object;
-		appleBlue.scale = FVector(1, 1, 1);
-		appleBlue.offset = FVector(0, 0, -23);
-		appleBlue.Location = FVector(0, 0, 0);
-		appleBlue.respawnTime = 10;
-		appleBlue.Health = 20;//units
-		appleBlue.bFood = true;
-
 		appleRed.Name = "Healing item";
 		appleRed.Mesh = appleRedAsset.Object;
 		appleRed.InvImage = appleRedImage.Object;
 		appleRed.scale = FVector(1, 1, 1);
-		appleRed.offset = FVector(0, 0, -30);
+		appleRed.offset = FVector(0, 0, -23);
 		appleRed.Location = FVector(0, 0, 0);
-		appleRed.respawnTime = 20;
-		appleRed.Speed = 0;
-		appleRed.bSpeed = true;
-		appleRed.Speed = 20;//%
-		appleRed.SpeedTime = 20;
+		appleRed.respawnTime = 10;
+		appleRed.Health = 20;//units
+		appleRed.bFood = true;
+
+		appleBlue.Name = "Speed boost";
+		appleBlue.Mesh = appleBlueAsset.Object;
+		appleBlue.InvImage = appleBlueImage.Object;
+		appleBlue.scale = FVector(1, 1, 1);
+		appleBlue.offset = FVector(0, 0, -30);
+		appleBlue.Location = FVector(0, 0, 0);
+		appleBlue.respawnTime = 20;
+		appleBlue.Speed = 0;
+		appleBlue.bSpeed = true;
+		appleBlue.Speed = 20;//%
+		appleBlue.SpeedTime = 20;
 
 		appleGreen.Name = "Damage Boost";
 		appleGreen.Mesh = appleGreenAsset.Object;
