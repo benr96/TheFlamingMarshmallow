@@ -66,7 +66,7 @@ ATestGameMode::ATestGameMode()
 	maxEnemies = 10;
 
 	//Linking the blueprint
-	static ConstructorHelpers::FObjectFinder<UBlueprint> Enemy_BP(TEXT("Blueprint'/Game/BP_EnemyCharacter.BP_EnemyCharacter'"));
+	static ConstructorHelpers::FObjectFinder<UBlueprint> Enemy_BP(TEXT("/Game/BP_EnemyCharacter"));
 
 	if (Enemy_BP.Object)
 	{
