@@ -7,6 +7,7 @@
 #include "MHUD.h"
 #include "UI_Controller.h"
 #include "AI.h"
+#include "EnemyCharacter.h"
 #include "mallow.generated.h"
 
 
@@ -131,7 +132,8 @@ public:
 	void SortEnemies();
 	void FindClosest();
 
-	TArray<AAI*> AllAI;
+	//TArray<AAI*> AllAI;
+	TArray<AEnemyCharacter*> AllAI;
 	FVector AILocation;
 	float mousePitch;
 	float mouseYaw;
@@ -157,6 +159,8 @@ public:
 	void Attack();
 	void DelayAttack();
 	void KnockBack();
+
+	bool bAttackAnimStarted = false;
 
 	bool bMenuShow;
 	bool bInvShow;

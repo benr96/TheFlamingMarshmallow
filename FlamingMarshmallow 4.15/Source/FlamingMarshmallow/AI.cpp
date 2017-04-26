@@ -6,7 +6,7 @@
 #include "TestGameMode.h"
 #include "Kismet/KismetMathLibrary.h"
 
-Amallow* mallow;
+Amallow* amallow;
 
 // Sets default values
 AAI::AAI()
@@ -51,7 +51,7 @@ void AAI::BeginPlay()
 {
 	Super::BeginPlay();
 
-	mallow = (Amallow*)(GetWorld()->GetFirstPlayerController()->GetPawn());
+	amallow = (Amallow*)(GetWorld()->GetFirstPlayerController()->GetPawn());
 }
 
 // Called every frame
@@ -67,7 +67,7 @@ void AAI::Tick(float DeltaTime)
 	{
 		Destroy();
 	}
-	if (!mallow->IsPendingKill())
+	if (!amallow->IsPendingKill())
 	{
 		if (bCanAttack)
 		{
@@ -104,7 +104,7 @@ void AAI::followMallow()
 
 void AAI::Attack()
 {
-	mallow->health -= damage;
+	amallow->health -= damage;
 	if (bKnock)
 	{
 		KnockBack();
@@ -115,10 +115,10 @@ void AAI::Attack()
 
 void AAI::CheckRangeToChar()
 {
-	distToPlayer = GetDistanceTo(mallow);
+	distToPlayer = GetDistanceTo(amallow);
 	if (distToPlayer <= 750)
 	{
-		rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), mallow->GetActorLocation());
+		rotation = UKismetMathLibrary::FindLookAtRotation(GetActorLocation(), amallow->GetActorLocation());
 		rotation.Pitch = 0.f;
 		SetActorRotation(rotation);
 		bInTargetRange = true;
@@ -144,26 +144,26 @@ void AAI::CheckRangeToChar()
 	{
 		bInTargetRange = false;
 	}
-	rotationFromChar = UKismetMathLibrary::FindLookAtRotation(mallow->GetActorLocation(), this->GetActorLocation());
+	rotationFromChar = UKismetMathLibrary::FindLookAtRotation(amallow->GetActorLocation(), this->GetActorLocation());
 }
 
 void AAI::KnockBack()
 {
 	FVector newPosition;
-	PlayerToThis = GetActorLocation() - mallow->GetActorLocation();
+	PlayerToThis = GetActorLocation() - amallow->GetActorLocation();
 	float LaunchForce = PlayerToThis.Normalize() * 1.001f;
 	UE_LOG(LogTemp, Warning, TEXT("FORCE: %f"), LaunchForce);
-	newPosition = mallow->GetActorLocation()*LaunchForce;
+	newPosition = amallow->GetActorLocation()*LaunchForce;
 
-	if (mallow->playerYaw >= -45.f && mallow->playerYaw <= 45.f)
+	if (amallow->playerYaw >= -45.f && amallow->playerYaw <= 45.f)
 	{
 		newPosition.X -= 15.f;
 	}
-	else if (mallow->playerYaw <= 135.f && mallow->playerYaw > 45.f)
+	else if (amallow->playerYaw <= 135.f && amallow->playerYaw > 45.f)
 	{
 		newPosition.Y -= 15.f;
 	}
-	else if (mallow->playerYaw >= -135.f && mallow->playerYaw < -45.f)
+	else if (amallow->playerYaw >= -135.f && amallow->playerYaw < -45.f)
 	{
 		newPosition.Y += 15.f;
 	}
@@ -171,8 +171,8 @@ void AAI::KnockBack()
 	{
 		newPosition.X += 15.f;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("VECTOR: %f %f %f"), mallow->GetActorLocation().X, mallow->GetActorLocation().Y, mallow->GetActorLocation().Z);
-	mallow->SetActorLocation(newPosition);
+	UE_LOG(LogTemp, Warning, TEXT("VECTOR: %f %f %f"), amallow->GetActorLocation().X, amallow->GetActorLocation().Y, amallow->GetActorLocation().Z);
+	amallow->SetActorLocation(newPosition);
 	bKnock = false;
 }
 

@@ -644,7 +644,8 @@ void Amallow::FindLeft()
 
 void Amallow::SortEnemies()
 {
-	AAI* temp;
+	//AAI* temp;
+	AEnemyCharacter* temp;
 	for (int i = 0; i < AllAI.Num(); i++)
 	{
 		int swaps = 0;
