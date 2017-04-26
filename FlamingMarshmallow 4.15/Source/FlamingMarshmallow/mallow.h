@@ -182,6 +182,11 @@ public:
 	FFindFloorResult floor;
 	float distToFloor;
 	FVector FloorLoc;
+
+	// Audio components
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Audio, meta = (AllowPrivateAccess = "true"))
+	UAudioComponent* propellerAudioComponent;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

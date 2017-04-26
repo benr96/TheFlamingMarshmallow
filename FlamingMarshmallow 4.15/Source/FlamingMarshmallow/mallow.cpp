@@ -67,6 +67,19 @@ Amallow::Amallow()
 		MallowVisual->SetStaticMesh(MallowVisualAsset.Object);
 		MallowVisual->SetRelativeLocation(FVector(5.0f, 0.0f, -12.0f));
 	}
+
+	// Creates an audio component
+	propellerAudioComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("PropellerAudioComp"));
+
+	// Stopping the sound from playing immediately
+	propellerAudioComponent->bAutoActivate = false;
+
+	// Attaching the sound to the pawn
+	propellerAudioComponent->SetupAttachment(RootComponent);
+
+	// Sound comes from slightly in front of the pawn
+	propellerAudioComponent->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
+
 	/*
 	MallowVisual = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("MallowVisual"));
 	MallowVisual->SetupAttachment(RootComponent);
@@ -474,6 +487,8 @@ void Amallow::jump()
 	{
 		float Z = GetCharacterMovement()->Velocity.Z;
 		float changeZ = 500;//make this relative to current Z so it always has a similar increase(currently double jumping at different levels of normal jump changes overall jump height quite a lot)
+		propellerAudioComponent->Activate(true);
+		propellerAudioComponent->Play();
 
 		if (midJump == true)
 		{
