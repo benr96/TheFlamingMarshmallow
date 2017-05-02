@@ -25,7 +25,8 @@ Classes:
 
 Using Unreal Tools:
 - Widgets in Unreal: HUD, Death Menu, In Game Menu, Main Menu
-- Landscape 
+- Landscape (using landscape and foliage tool)
+- Map Design
 
 Modelling:
 - Bridge
@@ -37,6 +38,11 @@ Classes:
 - Mallow: Triggering the sounds and the audio
 - TestGameMode: Implementing Items
 - EnemyCharacter: Enemy Character Assets
+
+Unreal Tools:
+- Map Design
+- Item Spawning
+- Audio Trigger
 
 Modelling:
 - Enemy Character 
