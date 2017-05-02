@@ -10,6 +10,67 @@ A group project for DT228/2 OOP's Assignment 3 by Something Developers which inc
 
 Endless survival horror between a lone marshmallow and a horde of chocolate enemies. The only goal is to survive. You must fight against the horde using any tools at your disposal which includes a targeting system that can be used to attack the enemies, various items scattered across the map to either revive health or boost your stats and a special flame attack that vastly increases your attacking power for a brief amount of time. Enemies will quickly surround you if you show even a hint of mercy, so eradicate the chocolate foes with brutal vengence.
 
+## WORK SPLIT
+
+### Ben Ryan
+
+Classes:
+- EnemyCharacter: Enemy Flames
+- Item: All of it
+- ItemSpawnLoc: All of it
+- Mallow: Player character movement (dashing, jumping etc)
+- MHUD: Made the HUD
+- TestGameMode: Item spawning, Possessing Mallow
+- UI_Controller: All of it
+
+Using Unreal Tools:
+- Widgets in Unreal: HUD, Death Menu, In Game Menu, Main Menu
+- Landscape 
+
+Modelling:
+- Bridge
+- Shrine
+
+### Dylan Kirby
+
+Classes:
+- Mallow: Triggering the sounds and the audio
+- TestGameMode: Implementing Items
+- EnemyCharacter: Enemy Character Assets
+
+Modelling:
+- Enemy Character 
+- One Story House
+- Two Story House
+- Lights
+- Fences
+
+Recording and editing the sounds used in the game
+
+### Patrick Malone
+
+Classes:
+- Enemy Character: Character movement, sensing, patroling
+- EnemyAI: All of it
+- Blackboard: All of it
+- BehaviorTree: All of it
+- BotTargetPoint
+- BotTargetPointSelection: All of it
+- Test Game mode: targeting
+
+Modelling:
+- Rocks 
+- Trees
+- Marshmallow
+
+### Yit Chee Chin
+
+Classes:
+- Mallow: Targeting enemies, attacking
+- EnemyCharacter: Attacking
+- TargetPointer: Following targeted enemy
+
+
 ## CONTROLS
 
 - W - Forward
