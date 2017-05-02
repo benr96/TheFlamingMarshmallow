@@ -52,11 +52,14 @@ Recording and editing the sounds used in the game
 Classes:
 - Enemy Character: Character movement, sensing, patroling
 - EnemyAI: All of it
-- Blackboard: All of it
-- BehaviorTree: All of it
 - BotTargetPoint
 - BotTargetPointSelection: All of it
-- Test Game mode: targeting
+- Test Game mode: helped with targeting
+
+Unreal tools:
+- Blackboard
+- Behavior Tree 
+- Nav Mesh Bounds
 
 Modelling:
 - Rocks 
